@@ -7,8 +7,8 @@
 \format{
 A data frame with 2880 rows and 9 variables:
 \describe{
-\item{time }{Time Stamps}
-\item{d2m }{2m dewpoint temperature. Temperature where air moisture starts to condense at 2m height.}
+\item{time}{Time Stamps}
+\item{d2m}{2m dewpoint temperature. Temperature where air moisture starts to condense at 2m height.}
 \item{t2m}{Air temperature 2 meters above ground.}
 \item{stl1}{Soil temperature level 1. Temperature of the top soil layer.}
 \item{u10}{10m u-component of wind: East-west wind speed at 10m.(positive means wind blowing east).}
