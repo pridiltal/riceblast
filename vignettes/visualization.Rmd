@@ -60,6 +60,7 @@ p <- p + geom_sf(data = points,  colour = "blue", size = 5) +
 
 print(p)
 ```
+
 ## Visualize data
 
 ```{r field1, fig.height=12}
