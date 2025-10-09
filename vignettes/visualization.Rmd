@@ -1,5 +1,5 @@
 ---
-title: "Exploring Field 1 data"
+title: "visualization"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{visualization}
