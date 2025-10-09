@@ -2,7 +2,7 @@
 title: "Exploring Field 1 Data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{visualization}
+  %\VignetteIndexEntry{Exploring Field 1 Data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
