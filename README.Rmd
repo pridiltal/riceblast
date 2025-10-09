@@ -18,20 +18,22 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of `riceblast` is to provides data and tools for forecasting rice blast
-disease outbreaks using weather-based parameters. It combines climate variables
-(such as temperature, humidity, and rainfall)  with knowledge of disease development 
-to build predictive models and early warning systems. The package helps researchers,
-agronomists, and policymakers understand and anticipate disease risks, supporting
-sustainable management strategies to reduce crop losses and improve food security.
+The goal of `riceblast` is to provides data and tools for forecasting
+rice blast disease outbreaks using weather-based parameters. It combines
+climate variables (such as temperature, humidity, and rainfall) with
+knowledge of disease development to build predictive models and early
+warning systems. The package helps researchers, agronomists, and
+policymakers understand and anticipate disease risks, supporting
+sustainable management strategies to reduce crop losses and improve food
+security.
 
 ## Installation
 
-You can install the development version of riceblast from GitHub with:
+You can install the development version of riceblast from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("pridiltal/riceblast")
+# install.packages("pak")
+pak::pak("pridiltal/riceblast")
 ```
 
 ## Example
@@ -42,4 +44,3 @@ This is a basic example which shows you how to solve a common problem:
 library(riceblast)
 head(field1)
 ```
-
