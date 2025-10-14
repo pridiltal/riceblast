@@ -17,7 +17,7 @@
 #' \item{stl1}{Soil temperature level 1. Temperature of the top soil layer.}
 #' \item{u10}{10m u-component of wind: East-west wind speed at 10m.(positive means wind blowing east).}
 #' \item{v10}{10m v-component of wind: North-south wind speed at 10m.(positive means wind blowing north).}
-#' \item{tp}{Total precipitation: The amount of rain, snow, or other moisture that falls..}
+#' \item{tp}{Total precipitation: The amount of rain, snow, or other moisture that falls.}
 #' \item{type}{Whether individual data points are disease points or not. "typical", "disease"}
 #' \item{RH}{Relative Humidity: How much moisture is in the air compared to its max capacity.
 #' Calculated using d2m and t2m. Calculated using RH <- 100 * (exp((17.625 * d2m) / (243.04 + d2m))) / (exp((17.625 * t2m) / (243.04 + t2m)))}}

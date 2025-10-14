@@ -61,6 +61,8 @@ print(p)
 
 ## Visualize data
 
+The following code visualizes the historical climate data. From left to right, the three vertical dotted lines represent the planting date (dark green), the start of the two-week period preceding the disease point (blue), and the disease point (red), respectively.
+
 ```{r field1, fig.height=12}
 # assuming your data frame is named df
 # Gather all continuous variables into long format
@@ -90,3 +92,6 @@ ggplot(df_long, aes(x = time, y = value, color = type)) +
   )
 ```
 
+When focusing on the two-week window preceding the disease occurrence, the visual representations indicate notable behavioural changes in several climate parameters. Specifically, the 2-meter dewpoint temperature (d2m; the temperature at which air moisture begins to condense), relative humidity (RH), soil temperature at level 1 (stl1; temperature of the top soil layer), and air temperature at 2 meters above ground (t2m).  These four climatic variables exhibit a notable drop in magnitude near the disease point, suggesting their potential usefulness for automated disease detection. Furthermore, the signatures observed in d2m and RH during the two-week period preceding the disease point can also be seen just before the start of this pre-disease window, which could serve as an additional indicator of the approaching disease point.
+
+In contrast, parameters such as total precipitation (tp; total rainfall or moisture accumulation), the 10-meter u-component of wind (u10; east–west wind speed, where positive values indicate wind blowing eastward), and the 10-meter v-component of wind (v10; north–south wind speed, where positive values indicate wind blowing northward) do not display significant deviations from their prior behaviour as the disease point approaches.

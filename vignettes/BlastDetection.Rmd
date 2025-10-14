@@ -1,0 +1,59 @@
+---
+title: "Blast Detection Framework"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{"Blast Detection Framework}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+```{r setup}
+library(riceblast)
+library(ceylon)
+library(tidyverse)
+library(sf)
+```
+
+This vignette presents a step-by-step weather-based framework for detecting rice blast disease using historical climate records and blast observations from Field 1 in Kilinochchi, Sri Lanka (9.385680° N, 80.538083° E).
+
+
+## Visualize data
+
+```{r field1, fig.height=12}
+# assuming your data frame is named df
+# Gather all continuous variables into long format
+df_long <- field1 |>
+  pivot_longer(cols = c(d2m, t2m, stl1, u10, v10, tp, RH),
+               names_to = "variable",
+               values_to = "value")
+
+# Create the plot
+ggplot(df_long, aes(x = time, y = value, color = type)) +
+  geom_point(alpha = 0.6) +
+  geom_vline( aes(xintercept =  as.POSIXct("2021-02-12 00:00:00", tz = "UTC")), color = "red", linetype = "dashed") +
+     geom_vline( aes(xintercept =  as.POSIXct("2021-02-12 00:00:00", tz = "UTC")-(14 * 24 * 60 * 60)), color = "blue", linetype = "dashed") +
+       geom_vline( aes(xintercept =  as.POSIXct("2020-11-15 00:00:00", tz = "UTC")), color = "darkgreen", linetype = "dashed") +
+  facet_wrap(~ variable, scales = "free_y", ncol = 1) +
+  theme_minimal() +
+  labs(
+    title = "Meteorological Variables Over Time",
+    x = "Time",
+    y = "Value",
+    color = "Type"
+  ) +
+  theme(
+    strip.text = element_text(face = "bold"),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom"
+  )
+```
+
