@@ -21,6 +21,13 @@ library(riceblast)
 library(ceylon)
 library(tidyverse)
 library(sf)
+library(fable)
+library(feasts)
+library(tsibble)
+library(evd)
+library(lubridate)
+#library(POT)
+library(rlang)
 ```
 
 This vignette presents a step-by-step weather-based framework for detecting rice blast disease using historical climate records and blast observations from Field 1 in Kilinochchi, Sri Lanka (9.385680° N, 80.538083° E).
@@ -32,17 +39,22 @@ This vignette presents a step-by-step weather-based framework for detecting rice
 # assuming your data frame is named df
 # Gather all continuous variables into long format
 df_long <- field1 |>
-  pivot_longer(cols = c(d2m, t2m, stl1, u10, v10, tp, RH),
-               names_to = "variable",
-               values_to = "value")
+  pivot_longer(
+    cols = c(d2m, t2m, stl1, u10, v10, tp, RH),
+    names_to = "variable",
+    values_to = "value"
+  )
 
 # Create the plot
 ggplot(df_long, aes(x = time, y = value, color = type)) +
   geom_point(alpha = 0.6) +
-  geom_vline( aes(xintercept =  as.POSIXct("2021-02-12 00:00:00", tz = "UTC")), color = "red", linetype = "dashed") +
-     geom_vline( aes(xintercept =  as.POSIXct("2021-02-12 00:00:00", tz = "UTC")-(14 * 24 * 60 * 60)), color = "blue", linetype = "dashed") +
-       geom_vline( aes(xintercept =  as.POSIXct("2020-11-15 00:00:00", tz = "UTC")), color = "darkgreen", linetype = "dashed") +
-  facet_wrap(~ variable, scales = "free_y", ncol = 1) +
+  geom_vline(aes(xintercept = as.POSIXct("2021-02-12 00:00:00", tz = "UTC")),
+             color = "red", linetype = "dashed") +
+  geom_vline(aes(xintercept = as.POSIXct("2021-02-12 00:00:00", tz = "UTC") -
+                   (14 * 24 * 60 * 60)), color = "blue", linetype = "dashed") +
+  geom_vline(aes(xintercept = as.POSIXct("2020-11-15 00:00:00", tz = "UTC")),
+             color = "darkgreen", linetype = "dashed") +
+  facet_wrap(~variable, scales = "free_y", ncol = 1) +
   theme_minimal() +
   labs(
     title = "Meteorological Variables Over Time",
@@ -56,4 +68,176 @@ ggplot(df_long, aes(x = time, y = value, color = type)) +
     legend.position = "bottom"
   )
 ```
+
+We consider the two-and-a-half-month period following the planting date as the *plant’s typical behaviour* window. Previous observations indicate that disease symptoms do not appear within this period. During this window, both the air temperature at 2 meters above ground (t2m) and the top-layer soil temperature (stl1) remain relatively stable. This stability provides an ideal baseline for modelling typical plant behaviour, and we therefore adopt this model to represent the plant’s typical state.
+
+### Air temperature 2 meters above ground
+
+```{r}
+# Create the plot of Air temperature 2 meters above ground.
+field1 |>
+  ggplot(aes(x = time, y = t2m)) +
+  geom_line() +
+  geom_point(alpha = 0.6) +
+  geom_vline(aes(xintercept = as.POSIXct("2021-02-12 00:00:00", tz = "UTC")),
+             color = "red", linetype = "dashed") +
+  geom_vline(aes(xintercept = as.POSIXct("2021-02-12 00:00:00", tz = "UTC") -
+                   (14 * 24 * 60 * 60)), color = "blue", linetype = "dashed") +
+  geom_vline(aes(xintercept = as.POSIXct("2020-11-15 00:00:00", tz = "UTC")), 
+             color = "darkgreen", linetype = "dashed") +
+  theme_minimal() +
+  labs(
+    title = "Air temperature 2 meters above ground",
+    x = "Time",
+    y = "Value",
+    color = "Type"
+  ) +
+  theme(
+    strip.text = element_text(face = "bold"),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom"
+  )
+```
+
+###  Temperature of the top soil layer.
+
+```{r}
+# Create the plot of Air temperature 2 meters above ground.
+field1 |>
+  ggplot(aes(x = time, y = stl1)) +
+  geom_line() +
+  geom_point(alpha = 0.6) +
+  geom_vline(aes(xintercept = as.POSIXct("2021-02-12 00:00:00", tz = "UTC")), 
+             color = "red", linetype = "dashed") +
+  geom_vline(aes(xintercept = as.POSIXct("2021-02-12 00:00:00", tz = "UTC") -
+                   (14 * 24 * 60 * 60)), color = "blue", linetype = "dashed") +
+  geom_vline(aes(xintercept = as.POSIXct("2020-11-15 00:00:00", tz = "UTC")),
+             color = "darkgreen", linetype = "dashed") +
+  theme_minimal() +
+  labs(
+    title = "Soil temperature level 1",
+    x = "Time",
+    y = "Value",
+    color = "Type"
+  ) +
+  theme(
+    strip.text = element_text(face = "bold"),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom"
+  )
+```
+
+
+### Modelling the typical behaviour
+
+```{r}
+typical_f1  <- field1 |>
+  filter(
+    time >= as.POSIXct("2020-11-15 00:00:00", tz = "UTC"),
+    time <= as.POSIXct("2020-11-15 00:00:00", tz = "UTC") + months(2) + days(15)
+  ) |>
+  select(time, t2m) |>
+  as_tsibble()
+  
+typical_f1 |> autoplot() 
+```
+
+
+```{r}
+typical_f1 |> 
+  gg_tsdisplay(t2m, plot_type='partial')
+```
+
+```{r}
+ typical_f1 |>
+  mutate(diff = difference(t2m, 24)) |>
+  ggtime::gg_tsdisplay(diff, plot_type = 'partial')
+```
+
+
+
+
+
+```{r eval=FALSE}
+
+# Step 1: Fit model and compute lower extreme threshold
+analysis <- model_extremes(
+  full_data = field1,
+  time_col = time,
+  typical_start = "2020-11-15 00:00:00",  
+  typical_end = "2021-02-01 00:00:00",
+  response = t2m,
+  t_method = "evd"
+)
+
+# Step 2: Forecast + test against full data
+test_result <- test_extremes(analysis, h = 1000)
+
+# Step 3: Visualize everything
+plots <- plot_extreme_analysis(test_result)
+```
+
+```{r echo=FALSE}
+analysis <- readRDS(system.file("extdata", "analysis_example_evd.rds", package = "riceblast"))
+test_result <- readRDS(system.file("extdata", "test_result_example_evd.rds", package = "riceblast"))
+plots <- readRDS(system.file("extdata", "plots_example_evd.rds", package = "riceblast"))
+```
+
+
+
+
+```{r}
+plots$main_plot
+
+```
+
+
+```{r}
+plots$error_plot
+```
+
+
+
+```{r eval=FALSE}
+# Step 1: Fit model and compute lower extreme threshold
+analysis <- model_extremes(
+  full_data = field1,
+  time_col = time,
+  typical_start = "2020-11-15 00:00:00",
+  typical_end = "2021-02-01 00:00:00",
+  response = t2m,
+  t_method = "boxplot"
+)
+
+# Step 2: Forecast + test against full data
+test_result <- test_extremes(analysis, h = 1000)
+
+# Step 3: Visualize everything
+plots <- plot_extreme_analysis(test_result)
+```
+
+```{r echo=FALSE}
+analysis <- readRDS(system.file("extdata", "analysis_example_boxplot.rds", package = "riceblast"))
+test_result <- readRDS(system.file("extdata", "test_result_example_boxplot.rds", package = "riceblast"))
+plots <- readRDS(system.file("extdata", "plots_example_boxplot.rds", package = "riceblast"))
+```
+
+
+```{r}
+plots$main_plot
+
+```
+
+
+
+```{r}
+plots$error_plot
+```
+
+
+```{r}
+analysis$lower_limit
+
+```
+
 

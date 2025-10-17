@@ -28,32 +28,33 @@ This dataset contains historical climate and rice blast disease observations for
 
 ```{r}
 data(district)
-p <- ggplot(district) + geom_sf() 
+p <- ggplot(district) +
+  geom_sf()
 
 
-fields <- tibble::tribble( 
-  ~Field,           ~lat,     ~lon,
-  "Kilinochchi:Field1",    9.385680, 80.538083
+fields <- tibble::tribble(
+  ~Field, ~lat, ~lon,
+  "Kilinochchi:Field1", 9.385680, 80.538083
 )
 
 points <- st_as_sf(fields, coords = c("lon", "lat"), crs = 4326) |>
   st_transform(crs = st_crs(sf_sl_0))
 
-p <- p + geom_sf(data = points,  colour = "blue", size = 5) +
+p <- p + geom_sf(data = points, colour = "blue", size = 5) +
   ggrepel::geom_label_repel(
     data = points,
     aes(label = Field, geometry = geometry),
     stat = "sf_coordinates",
     min.segment.length = 0,
-   colour = "red",
+    colour = "red",
     segment.colour = "red",
-   max.overlaps = getOption("ggrepel.max.overlaps", default = 200),
+    max.overlaps = getOption("ggrepel.max.overlaps", default = 200),
     label.size = 0.04,
-   size=4,
-   #alpha = 0.7,
-   #force_pull = 480,
-  force = 70,
-   seed = 1
+    size = 4,
+    # alpha = 0.7,
+    # force_pull = 480,
+    force = 70,
+    seed = 1
   )
 
 print(p)
@@ -67,17 +68,19 @@ The following code visualizes the historical climate data. From left to right, t
 # assuming your data frame is named df
 # Gather all continuous variables into long format
 df_long <- field1 |>
-  pivot_longer(cols = c(d2m, t2m, stl1, u10, v10, tp, RH),
-               names_to = "variable",
-               values_to = "value")
+  pivot_longer(
+    cols = c(d2m, t2m, stl1, u10, v10, tp, RH),
+    names_to = "variable",
+    values_to = "value"
+  )
 
 # Create the plot
 ggplot(df_long, aes(x = time, y = value, color = type)) +
   geom_point(alpha = 0.6) +
-  geom_vline( aes(xintercept =  as.POSIXct("2021-02-12 00:00:00", tz = "UTC")), color = "red", linetype = "dashed") +
-     geom_vline( aes(xintercept =  as.POSIXct("2021-02-12 00:00:00", tz = "UTC")-(14 * 24 * 60 * 60)), color = "blue", linetype = "dashed") +
-       geom_vline( aes(xintercept =  as.POSIXct("2020-11-15 00:00:00", tz = "UTC")), color = "darkgreen", linetype = "dashed") +
-  facet_wrap(~ variable, scales = "free_y", ncol = 1) +
+  geom_vline(aes(xintercept = as.POSIXct("2021-02-12 00:00:00", tz = "UTC")), color = "red", linetype = "dashed") +
+  geom_vline(aes(xintercept = as.POSIXct("2021-02-12 00:00:00", tz = "UTC") - (14 * 24 * 60 * 60)), color = "blue", linetype = "dashed") +
+  geom_vline(aes(xintercept = as.POSIXct("2020-11-15 00:00:00", tz = "UTC")), color = "darkgreen", linetype = "dashed") +
+  facet_wrap(~variable, scales = "free_y", ncol = 1) +
   theme_minimal() +
   labs(
     title = "Meteorological Variables Over Time",
