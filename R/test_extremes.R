@@ -4,10 +4,15 @@
 #' Extends the analysis from \code{\link{model_extremes}} by generating forecasts
 #' and evaluating model residuals and forecast errors relative to the estimated
 #' lower extreme threshold. This helps to assess whether future values fall within
-#' the expected range or cross the lower extreme boundary.
+#' the expected range or cross the lower extreme boundary. The function allows the
+#' inclusion of new test data, which is combined with the training (typical) data
+#' to create a complete dataset for residual and forecast error analysis.
 #'
 #' @param analysis_result A list object returned by \code{\link{model_extremes}},
 #'   containing the fitted model, lower limit, and related metadata.
+#' @param test_data A tsibble or data frame containing the test/forecast period
+#'   data. This will be combined with the typical_data from \code{analysis_result}
+#'   to form the full dataset used for error analysis.
 #' @param h Integer. The forecast horizon, i.e., the number of future observations
 #'   to predict. Default is 1000.
 #'
@@ -29,28 +34,39 @@
 #'   \item{model}{The fitted model object from \code{analysis_result}.}
 #'   \item{forecast}{A \code{fable} forecast object containing mean forecasts and intervals.}
 #'   \item{all_errors}{A \code{tsibble} containing both fitted residuals and forecast errors.}
-#'   \item{lower_limit}{The estimated lower extreme threshold (inherited from the model analysis).}
-#'   \item{full_data}{The complete input dataset used for modeling and testing.}
+#'   \item{lower_limit}{The estimated lower extreme threshold (from the model analysis).}
+#'   \item{full_data}{The combined dataset consisting of \code{typical_data} and \code{test_data}.}
 #'   \item{response}{The response variable name as a character string.}
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(tsibble)
-#' library(fable)
 #'
-#' # Assume model_extremes() has been run
-#' result <- model_extremes(
-#'   full_data = mydata,
-#'   typical_start = "2020-01-01",
-#'   typical_end = "2020-03-31",
-#'   response = temperature
+#' # Create a sample daily time series dataset (use Date, not POSIXct)
+#' data <- tsibble::tsibble(
+#'   date = seq.Date(as.Date("2020-01-01"), as.Date("2020-12-31"), by = "day"),
+#'   value = c(rnorm(300),rnorm(66, -3)),
+#'   index = date
 #' )
 #'
-#' test_result <- test_extremes(result, h = 200)
+#' # Run the model_extremes function
+#' result <- model_extremes(
+#'   full_data = data,
+#'   time_col = date,
+#'   typical_start = "2020-01-01",
+#'   typical_end = "2020-08-30",
+#'   response = value,
+#'   tail_prob = 0.1,
+#'   t_method = "boxplot"
+#' )
 #'
-#' test_result$all_errors
-#' }
+#' test_data <- data |>
+#'   dplyr::filter(date > as.Date("2020-06-30")) |>
+#'   dplyr::select(date, value) |>
+#'   tsibble::as_tsibble(index = date)
+#'
+#' test_result <- riceblast::test_extremes(result,test_data = test_data,  h = 200)
+#'
+#' test_result
 #'
 #' @importFrom fabletools augment forecast
 #' @importFrom tsibble as_tsibble
@@ -58,40 +74,56 @@
 #' @importFrom dplyr select mutate left_join bind_rows
 #' @importFrom rlang sym
 #' @export
-test_extremes <- function(analysis_result, h = 1000) {
+test_extremes <- function(analysis_result, test_data, h = 1000)
+{
   fit <- analysis_result$model
   lower_limit <- analysis_result$lower_limit
-  full_data <- analysis_result$full_data
+  typical_data <- analysis_result$typical_data
   response <- analysis_result$response
+  time_col    <- analysis_result$time_col
 
+  # Create sym objects
+  time_sym     <- rlang::sym(time_col)
   response_sym <- rlang::sym(response)
+
+  if (!("tsibble" %in% class(test_data))) {
+    test_data <- test_data |> tsibble::as_tsibble(index = !!time_sym)
+  }
+
+  test_data <- test_data |>
+    dplyr::filter(!!time_sym > max(typical_data[[time_col]]))
+
+  full_data <- dplyr::bind_rows(typical_data, test_data) |>
+    tsibble::as_tsibble(index = !!time_sym)
 
   # Forecast
   fc <- fit |> fabletools::forecast(h = h)
 
   # Fitted residuals
-  fitval <- augment(fit) |> dplyr::mutate(error = .resid, type = "Fitted Residual") |>
-    dplyr::select(time, error, type)
+  fitval <- fabletools::augment(fit) |>
+    dplyr::mutate(error = .resid, type = "Fitted Residual") |>
+    dplyr::select({{time_sym}}, error, type)
 
   # Forecast errors
   fc_errors <- fc |>
     tibble::as_tibble() |>
-    dplyr::select(time, .mean) |>
-    dplyr::left_join(full_data |> as_tibble(), by = "time") |>
+    select( {{time_sym}}, .mean) |>
+    dplyr::left_join(test_data |> tibble::as_tibble(), by = rlang::as_string(time_sym)) |>
     dplyr::mutate(error = !!response_sym - .mean, type = "Forecast Error") |>
-    dplyr::select(time, error, type)
+    dplyr::select({{time_sym}}, error, type)
 
   # Combine both
   all_errors <- dplyr::bind_rows(fitval, fc_errors) |>
-    tsibble::as_tsibble(index = time)
+    tsibble::as_tsibble(index = !!time_sym)
 
   # Return combined results
   list(
-    model = fit,
-    forecast = fc,
-    all_errors = all_errors,
+    model       = fit,
+    forecast    = fc,
+    all_errors  = all_errors,
     lower_limit = lower_limit,
-    full_data = full_data,
-    response = response
+    full_data   = full_data,
+    response = rlang::as_label(response_sym),
+    time_col = rlang::as_string(time_sym)
   )
 }

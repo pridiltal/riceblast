@@ -5,13 +5,15 @@
 #' and estimates a lower extreme threshold based on either Extreme Value Theory (EVT)
 #' using the Generalized Pareto Distribution (GPD) or a boxplot-based approach.
 #'
-#' @param full_data A tsibble object containing at least a time index column
-#'  a response variable to be modeled.
+#' @param typical_data A tsibble containing the typical observation window for model fitting.
+#'  If provided, this dataset will be used instead of subsetting `full_data`.
+#' @param full_data Optional tsibble object containing both typical observation window and
+#' test data window. (ignored if `typical_data` is provided).
 #' @param time_col Name of the time index column.
-#' @param typical_start Start date-time (character or POSIXct) defining the beginning
-#'   of the typical observation window used for model fitting.
+#' @param typical_start Optional Start date-time (character or POSIXct) defining the beginning
+#'   of the typical observation window used for model fitting. (ignored if `typical_data` is provided).
 #' @param typical_end End date-time (character or POSIXct) defining the end
-#'   of the typical observation window.
+#'   of the typical observation window. (ignored if `typical_data` is provided).
 #' @param response The response variable to model, passed as an unquoted column name.
 #' @param tail_prob Numeric value (default = 0.05). Tail probability used for defining
 #'   the lower extreme threshold when `t_method = "evd"`.
@@ -39,17 +41,16 @@
 #'   \item{model}{The fitted ARIMA model object.}
 #'   \item{lower_limit}{The estimated lower extreme threshold.}
 #'   \item{threshold_method}{The threshold estimation method used (`"evd"` or `"boxplot"`).}
-#'   \item{fitted_subset}{The subset of the time series used for model fitting.}
-#'   \item{full_data}{The original full dataset provided.}
+#'   \item{typical_data}{The subset of the time series used for model fitting.}
 #'   \item{response}{The response variable name.}
+#'   \item{time_col}{Name of the time index column.}
 #' }
 #'
 #' @examples
-#' \dontrun{
 #' # Create a sample daily time series dataset (use Date, not POSIXct)
 #' data <- tsibble::tsibble(
 #'   date = seq.Date(as.Date("2020-01-01"), as.Date("2020-12-31"), by = "day"),
-#'   value = rnorm(366),
+#'   value = c(rnorm(300),rnorm(66, -3)),
 #'   index = date
 #' )
 #'
@@ -58,12 +59,11 @@
 #'   full_data = data,
 #'   time_col = date,
 #'   typical_start = "2020-01-01",
-#'   typical_end = "2020-06-30",
+#'   typical_end = "2020-08-30",
 #'   response = value,
-#'   tail_prob = 0.05,
-#'   t_method = "evd"
+#'   tail_prob = 0.1,
+#'   t_method = "boxplot"
 #' )
-#' }
 #'
 #' @importFrom tsibble as_tsibble
 #' @importFrom fabletools augment model
@@ -75,7 +75,8 @@
 #' @importFrom evd fpot qgpd
 #' @export
 #'
-model_extremes <- function(full_data, time_col, typical_start, typical_end,
+model_extremes <- function(typical_data = NULL, full_data = NULL, time_col,
+                           typical_start = NULL, typical_end= NULL,
                            response, tail_prob = 0.05,
                            t_method = c("evd", "boxplot")) {
 
@@ -83,38 +84,65 @@ model_extremes <- function(full_data, time_col, typical_start, typical_end,
   response_sym <- rlang::ensym(response)
   time_sym <- rlang::ensym(time_col)
 
-  # Ensure input is a tsibble with correct index
-  if (!("tsibble" %in% class(full_data))) {
-    full_data <- full_data |>
-      tsibble::as_tsibble(index = !!time_sym)
+
+
+  # small helper to convert character to correct type
+  convert_to_idx_type <- function(x, cls) {
+    if (cls == "Date") return(as.Date(x))
+    if (cls == "POSIXct") return(as.POSIXct(x, tz="UTC"))
+    stop("Unsupported index class: ", cls)
   }
 
-  # Subset for "typical" behavior
-  data_subset <- full_data |>
-    dplyr::filter( !!time_sym >= as.POSIXct(typical_start, tz = "UTC"),
-                   !!time_sym <= as.POSIXct(typical_end, tz = "UTC") ) |>
-    dplyr::select(!!time_sym, !!response_sym) |>
-    tsibble::as_tsibble(index = !!time_sym)
+  # Use provided typical_data or subset for "typical" behavior
+  if (is.null(typical_data)) {
+    # Ensure input is a tsibble with correct index
+    if (!("tsibble" %in% class(full_data))) {
+      full_data <- full_data |>
+        tsibble::as_tsibble(index = !!time_sym)
+    }
+    idx_class <- class(full_data[[time_sym]])[1]
+
+    typical_data <- full_data |>
+      dplyr::filter( !!time_sym >= convert_to_idx_type(typical_start, idx_class),
+                     !!time_sym <= convert_to_idx_type(typical_end, idx_class) ) |>
+      dplyr::select(!!time_sym, !!response_sym) |>
+      tsibble::as_tsibble(index = !!time_sym)
+
+    print(typical_data)
+
+    if (nrow(typical_data) == 0) {
+      stop("typical_data is EMPTY - check typical_start/typical_end formatting or range")
+    }
+  }else{
+
+    # Ensure input is a tsibble with correct index
+    if (!("tsibble" %in% class(typical_data))) {
+      typical_data <- typical_data |>
+        tsibble::as_tsibble(index = !!time_sym)
+    }
+  }
 
 
   # Fit ARIMA model
-  fit <- data_subset |> fabletools::model(fable::ARIMA(!!response_sym))
+  fit <- typical_data |> fabletools::model(fable::ARIMA(!!response_sym))
 
   # Extract residuals
   fitval <- fabletools::augment(fit) |> dplyr::mutate(residual = .resid)
   res <- stats::na.omit(fitval$residual)
 
-
-  if (length(res) == 0 || all(is.na(res))) {
-    warning("No residuals available for extreme value modeling. Returning NA.")
-    return(NA)
-  }
+#  if (length(res) == 0 || all(is.na(res))) {
+#    warning("No residuals available for extreme value modeling. Returning NA.")
+#    return(NA)
+#  }
 
   # Threshold estimation
-
   if (t_method == "evd") {
     thr <- quantile(res, tail_prob)
-    fit_gpd <- evd::fpot(-res, threshold = -thr)
+    tail_data <- res[res < thr]
+    if (length(tail_data) < 10) {
+      stop("Too few tail observations for EVT - increase tail_prob or use boxplot method.")
+    }
+    fit_gpd <- evd::fpot(-res, threshold = -thr, std.err = FALSE)
     params <- fit_gpd$estimate
     lower_limit <- -evd::qgpd(
       tail_prob, loc = -thr,
@@ -130,8 +158,8 @@ model_extremes <- function(full_data, time_col, typical_start, typical_end,
     model = fit,
     lower_limit = lower_limit,
     threshold_method = t_method,
-    fitted_subset = data_subset,
-    full_data = full_data,
-    response = rlang::as_label(response_sym)
+    typical_data = typical_data,
+    response = rlang::as_label(response_sym),
+    time_col = rlang::as_string(time_sym)
   )
 }

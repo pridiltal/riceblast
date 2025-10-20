@@ -31,29 +31,37 @@
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(tsibble)
-#' library(fable)
-#' library(ggplot2)
-#'
-#' # Run modeling and testing first
-#' result <- model_extremes(
-#'   full_data = mydata,
-#'   typical_start = "2020-01-01",
-#'   typical_end = "2020-03-31",
-#'   response = temperature
+#' # Create a sample daily time series dataset (use Date, not POSIXct)
+#' data <- tsibble::tsibble(
+#'   date = seq.Date(as.Date("2020-01-01"), as.Date("2020-12-31"), by = "day"),
+#'   value = c(rnorm(300),rnorm(66, -3)),
+#'   index = date
 #' )
 #'
-#' test_result <- test_extremes(result, h = 200)
+#' # Run the model_extremes function
+#' result <- model_extremes(
+#'   full_data = data,
+#'   time_col = date,
+#'   typical_start = "2020-01-01",
+#'   typical_end = "2020-08-30",
+#'   response = value,
+#'   tail_prob = 0.1,
+#'   t_method = "boxplot"
+#' )
+#'
+#' test_data <- data |>
+#'   dplyr::filter(date > as.Date("2020-06-30")) |>
+#'   dplyr::select(date, value) |>
+#'   tsibble::as_tsibble(index = date)
+#'
+#' test_result <- riceblast::test_extremes(result,test_data = test_data,  h = 200)
 #'
 #' # Generate and view plots
 #' plots <- plot_extreme_analysis(test_result)
 #' plots$main_plot
 #' plots$error_plot
-#' }
 #'
-#' @importFrom ggplot2 ggplot aes geom_point geom_hline labs theme_minimal
-#' @importFrom ggplot2 autoplot autolayer
+#' @importFrom ggplot2 ggplot aes geom_point geom_hline labs theme_minimal autolayer autoplot
 #' @importFrom glue glue
 #' @importFrom rlang sym
 #' @importFrom stats fitted
@@ -66,15 +74,17 @@ plot_extreme_analysis <- function(analysis_result) {
   all_errors <- analysis_result$all_errors
   response <- analysis_result$response
   threshold_method <- analysis_result$threshold_method
+  time_col    <- analysis_result$time_col
 
   # Make sure the response symbol is properly recognized
   response_sym <- rlang::sym(response)
+  time_sym     <- rlang::sym(time_col)
 
   # Main plot: Observed, Fitted, and Forecasted values
-  p_main <- autoplot(full_data, !!response_sym) +
-    autolayer(stats::fitted(fit), colour = "blue", alpha = 0.7) +
-    autolayer(fc, colour = "red", alpha = 0.7) +
-    labs(
+  p_main <- ggplot2::autoplot(full_data, !!response_sym) +
+    ggplot2::autolayer(stats::fitted(fit), colour = "blue", alpha = 0.7) +
+    ggplot2::autolayer(fc, colour = "red", alpha = 0.7) +
+    ggplot2::labs(
       title = glue::glue(
         "Observed, Fitted, and Forecasted Values (Threshold: {toupper(threshold_method)})"
       ),
@@ -82,14 +92,14 @@ plot_extreme_analysis <- function(analysis_result) {
       x = "Time",
       colour = "Series"
     ) +
-    theme_minimal()
+    ggplot2::theme_minimal()
 
   # Error plot: Residuals + Forecast errors
-  p_error <- ggplot(all_errors, aes(x = time, y = error, colour = type)) +
-    geom_point(alpha = 0.5) +
-    geom_hline(yintercept = 0, colour = "black") +
-    geom_hline(yintercept = lower_limit, colour = "red", linetype = "dashed") +
-    labs(
+  p_error <- ggplot2::ggplot(all_errors, aes(x = !!time_sym, y = error, colour = type)) +
+    ggplot2::geom_point(alpha = 0.5) +
+    ggplot2::geom_hline(yintercept = 0, colour = "black") +
+    ggplot2::geom_hline(yintercept = lower_limit, colour = "red", linetype = "dashed") +
+    ggplot2::labs(
       title = glue::glue(
         "Residuals and Forecast Errors (Lower Limit by {toupper(threshold_method)})"
       ),
@@ -97,7 +107,7 @@ plot_extreme_analysis <- function(analysis_result) {
       x = "Time",
       colour = "Type"
     ) +
-    theme_minimal()
+    ggplot2::theme_minimal()
 
   list(main_plot = p_main, error_plot = p_error)
 }

@@ -208,13 +208,13 @@ plant’s typical state.</p>
 <span>    <span class="va">time</span> <span class="op">&lt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2020-11-15 00:00:00"</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/weekday.POSIXt.html" class="external-link">months</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/period.html" class="external-link">days</a></span><span class="op">(</span><span class="fl">15</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">t2m</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://tsibble.tidyverts.org/reference/as-tsibble.html" class="external-link">as_tsibble</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">tsibble</span><span class="fu">::</span><span class="fu"><a href="https://tsibble.tidyverts.org/reference/as-tsibble.html" class="external-link">as_tsibble</a></span><span class="op">(</span>index <span class="op">=</span> <span class="va">time</span><span class="op">)</span></span>
 <span>  </span>
-<span><span class="va">typical_f1</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="op">)</span> </span></code></pre></div>
+<span><span class="va">typical_f1</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">t2m</span><span class="op">)</span> </span></code></pre></div>
 <p><img src="BlastDetection_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">typical_f1</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://feasts.tidyverts.org/reference/gg_tsdisplay.html" class="external-link">gg_tsdisplay</a></span><span class="op">(</span><span class="va">t2m</span>, plot_type<span class="op">=</span><span class="st">'partial'</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu">ggtime</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggtime/man/gg_tsdisplay.html" class="external-link">gg_tsdisplay</a></span><span class="op">(</span><span class="va">t2m</span>, plot_type<span class="op">=</span><span class="st">'partial'</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BlastDetection_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="va">typical_f1</span> <span class="op">|&gt;</span></span>
@@ -223,53 +223,58 @@ plant’s typical state.</p>
 <p><img src="BlastDetection_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
+<span><span class="va">test_f1</span> <span class="op">&lt;-</span> <span class="va">field1</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span> <span class="va">time</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2021-01-30 00:00:00"</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span> <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">t2m</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu">tsibble</span><span class="fu">::</span><span class="fu"><a href="https://tsibble.tidyverts.org/reference/as-tsibble.html" class="external-link">as_tsibble</a></span><span class="op">(</span>index <span class="op">=</span> <span class="va">time</span><span class="op">)</span></span>
+<span></span>
+<span></span>
 <span><span class="co"># Step 1: Fit model and compute lower extreme threshold</span></span>
-<span><span class="va">analysis</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_extremes.html">model_extremes</a></span><span class="op">(</span></span>
-<span>  full_data <span class="op">=</span> <span class="va">field1</span>,</span>
+<span><span class="va">analysis_result</span> <span class="op">&lt;-</span> <span class="fu">riceblast</span><span class="fu">::</span><span class="fu"><a href="../reference/model_extremes.html">model_extremes</a></span><span class="op">(</span></span>
+<span>  typical_data  <span class="op">=</span> <span class="va">typical_f1</span>,</span>
 <span>  time_col <span class="op">=</span> <span class="va">time</span>,</span>
-<span>  typical_start <span class="op">=</span> <span class="st">"2020-11-15 00:00:00"</span>,  </span>
-<span>  typical_end <span class="op">=</span> <span class="st">"2021-02-01 00:00:00"</span>,</span>
 <span>  response <span class="op">=</span> <span class="va">t2m</span>,</span>
 <span>  t_method <span class="op">=</span> <span class="st">"evd"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Step 2: Forecast + test against full data</span></span>
-<span><span class="va">test_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/test_extremes.html">test_extremes</a></span><span class="op">(</span><span class="va">analysis</span>, h <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
+<span><span class="va">test_result</span> <span class="op">&lt;-</span> <span class="fu">riceblast</span><span class="fu">::</span><span class="fu"><a href="../reference/test_extremes.html">test_extremes</a></span><span class="op">(</span><span class="va">analysis_result</span>, test_data <span class="op">=</span> <span class="va">test_f1</span>, h <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Step 3: Visualize everything</span></span>
 <span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_extreme_analysis.html">plot_extreme_analysis</a></span><span class="op">(</span><span class="va">test_result</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plots</span><span class="op">$</span><span class="va">main_plot</span></span></code></pre></div>
-<p><img src="BlastDetection_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">plots</span><span class="op">$</span><span class="va">error_plot</span></span></code></pre></div>
 <p><img src="BlastDetection_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">plots</span><span class="op">$</span><span class="va">error_plot</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2021-02-12 00:00:00"</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>             color <span class="op">=</span> <span class="st">"red"</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="BlastDetection_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Step 1: Fit model and compute lower extreme threshold</span></span>
-<span><span class="va">analysis</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_extremes.html">model_extremes</a></span><span class="op">(</span></span>
-<span>  full_data <span class="op">=</span> <span class="va">field1</span>,</span>
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Step 1: Fit model and compute lower extreme threshold</span></span>
+<span><span class="va">analysis_result</span> <span class="op">&lt;-</span> <span class="fu">riceblast</span><span class="fu">::</span><span class="fu"><a href="../reference/model_extremes.html">model_extremes</a></span><span class="op">(</span></span>
+<span>  typical_data  <span class="op">=</span> <span class="va">typical_f1</span>,</span>
 <span>  time_col <span class="op">=</span> <span class="va">time</span>,</span>
-<span>  typical_start <span class="op">=</span> <span class="st">"2020-11-15 00:00:00"</span>,</span>
-<span>  typical_end <span class="op">=</span> <span class="st">"2021-02-01 00:00:00"</span>,</span>
 <span>  response <span class="op">=</span> <span class="va">t2m</span>,</span>
 <span>  t_method <span class="op">=</span> <span class="st">"boxplot"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Step 2: Forecast + test against full data</span></span>
-<span><span class="va">test_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/test_extremes.html">test_extremes</a></span><span class="op">(</span><span class="va">analysis</span>, h <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
+<span><span class="va">test_result</span> <span class="op">&lt;-</span> <span class="fu">riceblast</span><span class="fu">::</span><span class="fu"><a href="../reference/test_extremes.html">test_extremes</a></span><span class="op">(</span><span class="va">analysis_result</span>, test_data <span class="op">=</span> <span class="va">test_f1</span>, h <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Step 3: Visualize everything</span></span>
 <span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_extreme_analysis.html">plot_extreme_analysis</a></span><span class="op">(</span><span class="va">test_result</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plots</span><span class="op">$</span><span class="va">main_plot</span></span></code></pre></div>
-<p><img src="BlastDetection_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
+<p><img src="BlastDetection_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plots</span><span class="op">$</span><span class="va">error_plot</span></span></code></pre></div>
-<p><img src="BlastDetection_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
+<p><img src="BlastDetection_files/figure-html/unnamed-chunk-16-1.png" width="700"></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">analysis</span><span class="op">$</span><span class="va">lower_limit</span></span>
-<span><span class="co">#&gt;        25% </span></span>
-<span><span class="co">#&gt; -0.5214185</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">analysis_result</span><span class="op">$</span><span class="va">lower_limit</span></span>
+<span><span class="co">#&gt;       25% </span></span>
+<span><span class="co">#&gt; -0.498965</span></span></code></pre></div>
 </div>
 </div>
   </div>

@@ -5,26 +5,30 @@
 \title{Model typical behaviour and Estimate Lower Extreme Threshold}
 \usage{
 model_extremes(
-  full_data,
+  typical_data = NULL,
+  full_data = NULL,
   time_col,
-  typical_start,
-  typical_end,
+  typical_start = NULL,
+  typical_end = NULL,
   response,
   tail_prob = 0.05,
   t_method = c("evd", "boxplot")
 )
 }
 \arguments{
-\item{full_data}{A tsibble object containing at least a time index column
-a response variable to be modeled.}
+\item{typical_data}{A tsibble containing the typical observation window for model fitting.
+If provided, this dataset will be used instead of subsetting `full_data`.}
+
+\item{full_data}{Optional tsibble object containing both typical observation window and
+test data window. (ignored if `typical_data` is provided).}
 
 \item{time_col}{Name of the time index column.}
 
-\item{typical_start}{Start date-time (character or POSIXct) defining the beginning
-of the typical observation window used for model fitting.}
+\item{typical_start}{Optional Start date-time (character or POSIXct) defining the beginning
+of the typical observation window used for model fitting. (ignored if `typical_data` is provided).}
 
 \item{typical_end}{End date-time (character or POSIXct) defining the end
-of the typical observation window.}
+of the typical observation window. (ignored if `typical_data` is provided).}
 
 \item{response}{The response variable to model, passed as an unquoted column name.}
 
@@ -44,9 +48,9 @@ A list containing:
   \item{model}{The fitted ARIMA model object.}
   \item{lower_limit}{The estimated lower extreme threshold.}
   \item{threshold_method}{The threshold estimation method used (`"evd"` or `"boxplot"`).}
-  \item{fitted_subset}{The subset of the time series used for model fitting.}
-  \item{full_data}{The original full dataset provided.}
+  \item{typical_data}{The subset of the time series used for model fitting.}
   \item{response}{The response variable name.}
+  \item{time_col}{Name of the time index column.}
 }
 }
 \description{
@@ -67,11 +71,10 @@ Depending on the chosen `t_method`, the lower extreme threshold is estimated:
 }
 }
 \examples{
-\dontrun{
 # Create a sample daily time series dataset (use Date, not POSIXct)
 data <- tsibble::tsibble(
   date = seq.Date(as.Date("2020-01-01"), as.Date("2020-12-31"), by = "day"),
-  value = rnorm(366),
+  value = c(rnorm(300),rnorm(66, -3)),
   index = date
 )
 
@@ -80,11 +83,10 @@ result <- model_extremes(
   full_data = data,
   time_col = date,
   typical_start = "2020-01-01",
-  typical_end = "2020-06-30",
+  typical_end = "2020-08-30",
   response = value,
-  tail_prob = 0.05,
-  t_method = "evd"
+  tail_prob = 0.1,
+  t_method = "boxplot"
 )
-}
 
 }

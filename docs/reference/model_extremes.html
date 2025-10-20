@@ -62,10 +62,11 @@ using the Generalized Pareto Distribution (GPD) or a boxplot-based approach.</p>
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">model_extremes</span><span class="op">(</span></span>
-<span>  <span class="va">full_data</span>,</span>
+<span>  typical_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  full_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">time_col</span>,</span>
-<span>  <span class="va">typical_start</span>,</span>
-<span>  <span class="va">typical_end</span>,</span>
+<span>  typical_start <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  typical_end <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">response</span>,</span>
 <span>  tail_prob <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  t_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"evd"</span>, <span class="st">"boxplot"</span><span class="op">)</span></span>
@@ -76,9 +77,14 @@ using the Generalized Pareto Distribution (GPD) or a boxplot-based approach.</p>
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg-full-data">full_data<a class="anchor" aria-label="anchor" href="#arg-full-data"></a></dt>
-<dd><p>A tsibble object containing at least a time index column
-a response variable to be modeled.</p></dd>
+<dl><dt id="arg-typical-data">typical_data<a class="anchor" aria-label="anchor" href="#arg-typical-data"></a></dt>
+<dd><p>A tsibble containing the typical observation window for model fitting.
+If provided, this dataset will be used instead of subsetting `full_data`.</p></dd>
+
+
+<dt id="arg-full-data">full_data<a class="anchor" aria-label="anchor" href="#arg-full-data"></a></dt>
+<dd><p>Optional tsibble object containing both typical observation window and
+test data window. (ignored if `typical_data` is provided).</p></dd>
 
 
 <dt id="arg-time-col">time_col<a class="anchor" aria-label="anchor" href="#arg-time-col"></a></dt>
@@ -86,13 +92,13 @@ a response variable to be modeled.</p></dd>
 
 
 <dt id="arg-typical-start">typical_start<a class="anchor" aria-label="anchor" href="#arg-typical-start"></a></dt>
-<dd><p>Start date-time (character or POSIXct) defining the beginning
-of the typical observation window used for model fitting.</p></dd>
+<dd><p>Optional Start date-time (character or POSIXct) defining the beginning
+of the typical observation window used for model fitting. (ignored if `typical_data` is provided).</p></dd>
 
 
 <dt id="arg-typical-end">typical_end<a class="anchor" aria-label="anchor" href="#arg-typical-end"></a></dt>
 <dd><p>End date-time (character or POSIXct) defining the end
-of the typical observation window.</p></dd>
+of the typical observation window. (ignored if `typical_data` is provided).</p></dd>
 
 
 <dt id="arg-response">response<a class="anchor" aria-label="anchor" href="#arg-response"></a></dt>
@@ -122,14 +128,14 @@ Options are:</p><ul><li><p>`"evd"` — estimates the threshold using the General
   <dt>threshold_method</dt>
 <dd><p>The threshold estimation method used (`"evd"` or `"boxplot"`).</p></dd>
 
-  <dt>fitted_subset</dt>
+  <dt>typical_data</dt>
 <dd><p>The subset of the time series used for model fitting.</p></dd>
-
-  <dt>full_data</dt>
-<dd><p>The original full dataset provided.</p></dd>
 
   <dt>response</dt>
 <dd><p>The response variable name.</p></dd>
+
+  <dt>time_col</dt>
+<dd><p>Name of the time index column.</p></dd>
 
 
 </dl></div>
@@ -145,11 +151,10 @@ using the `fable` framework, and residuals are extracted.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Create a sample daily time series dataset (use Date, not POSIXct)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create a sample daily time series dataset (use Date, not POSIXct)</span></span></span>
 <span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">tsibble</span><span class="fu">::</span><span class="fu"><a href="https://tsibble.tidyverts.org/reference/tsibble.html" class="external-link">tsibble</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.Date.html" class="external-link">seq.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2020-12-31"</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"day"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">366</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">300</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">66</span>, <span class="op">-</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  index <span class="op">=</span> <span class="va">date</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -158,12 +163,25 @@ using the `fable` framework, and residuals are extracted.</p>
 <span class="r-in"><span>  full_data <span class="op">=</span> <span class="va">data</span>,</span></span>
 <span class="r-in"><span>  time_col <span class="op">=</span> <span class="va">date</span>,</span></span>
 <span class="r-in"><span>  typical_start <span class="op">=</span> <span class="st">"2020-01-01"</span>,</span></span>
-<span class="r-in"><span>  typical_end <span class="op">=</span> <span class="st">"2020-06-30"</span>,</span></span>
+<span class="r-in"><span>  typical_end <span class="op">=</span> <span class="st">"2020-08-30"</span>,</span></span>
 <span class="r-in"><span>  response <span class="op">=</span> <span class="va">value</span>,</span></span>
-<span class="r-in"><span>  tail_prob <span class="op">=</span> <span class="fl">0.05</span>,</span></span>
-<span class="r-in"><span>  t_method <span class="op">=</span> <span class="st">"evd"</span></span></span>
+<span class="r-in"><span>  tail_prob <span class="op">=</span> <span class="fl">0.1</span>,</span></span>
+<span class="r-in"><span>  t_method <span class="op">=</span> <span class="st">"boxplot"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tsibble: 243 x 2 [1D]</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    date          value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 2020-01-01 -<span style="color: #BB0000;">1.40</span>   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 2020-01-02  0.255  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 2020-01-03 -<span style="color: #BB0000;">2.44</span>   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 2020-01-04 -<span style="color: #BB0000;">0.005</span><span style="color: #BB0000; text-decoration: underline;">57</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 2020-01-05  0.622  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 2020-01-06  1.15   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 2020-01-07 -<span style="color: #BB0000;">1.82</span>   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 2020-01-08 -<span style="color: #BB0000;">0.247</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 2020-01-09 -<span style="color: #BB0000;">0.244</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 2020-01-10 -<span style="color: #BB0000;">0.283</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 233 more rows</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

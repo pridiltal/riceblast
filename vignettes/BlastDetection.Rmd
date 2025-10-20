@@ -2,7 +2,7 @@
 title: "Blast Detection Framework"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{"Blast Detection Framework}
+  %\VignetteIndexEntry{"Blast Detection Framework"}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -137,15 +137,15 @@ typical_f1  <- field1 |>
     time <= as.POSIXct("2020-11-15 00:00:00", tz = "UTC") + months(2) + days(15)
   ) |>
   select(time, t2m) |>
-  as_tsibble()
+  tsibble::as_tsibble(index = time)
   
-typical_f1 |> autoplot() 
+typical_f1 |> autoplot(t2m) 
 ```
 
 
 ```{r}
 typical_f1 |> 
-  gg_tsdisplay(t2m, plot_type='partial')
+  ggtime::gg_tsdisplay(t2m, plot_type='partial')
 ```
 
 ```{r}
@@ -158,34 +158,42 @@ typical_f1 |>
 
 
 
-```{r eval=FALSE}
+```{r eval = FALSE}
+
+test_f1 <- field1 |>
+  dplyr::filter( time > as.POSIXct("2021-01-30 00:00:00", tz = "UTC") ) |>
+      dplyr::select(time, t2m) |>
+      tsibble::as_tsibble(index = time)
+
 
 # Step 1: Fit model and compute lower extreme threshold
-analysis <- model_extremes(
-  full_data = field1,
+analysis_result <- riceblast::model_extremes(
+  typical_data  = typical_f1,
   time_col = time,
-  typical_start = "2020-11-15 00:00:00",  
-  typical_end = "2021-02-01 00:00:00",
   response = t2m,
   t_method = "evd"
 )
 
 # Step 2: Forecast + test against full data
-test_result <- test_extremes(analysis, h = 1000)
+test_result <- riceblast::test_extremes(analysis_result, test_data = test_f1, h = 1000)
 
 # Step 3: Visualize everything
 plots <- plot_extreme_analysis(test_result)
 ```
 
+```{r echo = FALSE, eval = FALSE}
+saveRDS(analysis_result, here::here("inst","extdata", "analysis_example_evd.rds"))
+saveRDS(test_result, here::here("inst","extdata","test_result_example_evd.rds"))
+saveRDS(plots, here::here("inst","extdata", "plots_example_evd.rds"))
+```
+
 ```{r echo=FALSE}
-analysis <- readRDS(system.file("extdata", "analysis_example_evd.rds", package = "riceblast"))
+analysis_result <- readRDS(system.file("extdata", "analysis_example_evd.rds", package = "riceblast"))
 test_result <- readRDS(system.file("extdata", "test_result_example_evd.rds", package = "riceblast"))
 plots <- readRDS(system.file("extdata", "plots_example_evd.rds", package = "riceblast"))
 ```
 
 
-
-
 ```{r}
 plots$main_plot
 
@@ -193,34 +201,43 @@ plots$main_plot
 
 
 ```{r}
-plots$error_plot
+plots$error_plot +
+    geom_vline(aes(xintercept = as.POSIXct("2021-02-12 00:00:00", tz = "UTC")),
+             color = "red", linetype = "dashed")
 ```
 
 
 
-```{r eval=FALSE}
+```{r eval=FALSE }
+
 # Step 1: Fit model and compute lower extreme threshold
-analysis <- model_extremes(
-  full_data = field1,
+analysis_result <- riceblast::model_extremes(
+  typical_data  = typical_f1,
   time_col = time,
-  typical_start = "2020-11-15 00:00:00",
-  typical_end = "2021-02-01 00:00:00",
   response = t2m,
   t_method = "boxplot"
 )
 
 # Step 2: Forecast + test against full data
-test_result <- test_extremes(analysis, h = 1000)
+test_result <- riceblast::test_extremes(analysis_result, test_data = test_f1, h = 1000)
 
 # Step 3: Visualize everything
 plots <- plot_extreme_analysis(test_result)
 ```
 
+
+```{r echo = FALSE, eval = FALSE}
+saveRDS(analysis_result, here::here("inst","extdata", "analysis_example_boxplot.rds"))
+saveRDS(test_result, here::here("inst","extdata","test_result_example_boxplot.rds"))
+saveRDS(plots, here::here("inst","extdata", "plots_example_boxplot.rds"))
+```
+
 ```{r echo=FALSE}
-analysis <- readRDS(system.file("extdata", "analysis_example_boxplot.rds", package = "riceblast"))
+analysis_result <- readRDS(system.file("extdata", "analysis_example_boxplot.rds", package = "riceblast"))
 test_result <- readRDS(system.file("extdata", "test_result_example_boxplot.rds", package = "riceblast"))
 plots <- readRDS(system.file("extdata", "plots_example_boxplot.rds", package = "riceblast"))
 ```
+
 
 
 ```{r}
@@ -236,7 +253,7 @@ plots$error_plot
 
 
 ```{r}
-analysis$lower_limit
+analysis_result$lower_limit
 
 ```
 

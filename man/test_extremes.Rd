@@ -4,11 +4,15 @@
 \alias{test_extremes}
 \title{Test Model Extremes on Fitted and Forecasted Periods}
 \usage{
-test_extremes(analysis_result, h = 1000)
+test_extremes(analysis_result, test_data, h = 1000)
 }
 \arguments{
 \item{analysis_result}{A list object returned by \code{\link{model_extremes}},
 containing the fitted model, lower limit, and related metadata.}
+
+\item{test_data}{A tsibble or data frame containing the test/forecast period
+data. This will be combined with the typical_data from \code{analysis_result}
+to form the full dataset used for error analysis.}
 
 \item{h}{Integer. The forecast horizon, i.e., the number of future observations
 to predict. Default is 1000.}
@@ -19,8 +23,8 @@ A list containing:
   \item{model}{The fitted model object from \code{analysis_result}.}
   \item{forecast}{A \code{fable} forecast object containing mean forecasts and intervals.}
   \item{all_errors}{A \code{tsibble} containing both fitted residuals and forecast errors.}
-  \item{lower_limit}{The estimated lower extreme threshold (inherited from the model analysis).}
-  \item{full_data}{The complete input dataset used for modeling and testing.}
+  \item{lower_limit}{The estimated lower extreme threshold (from the model analysis).}
+  \item{full_data}{The combined dataset consisting of \code{typical_data} and \code{test_data}.}
   \item{response}{The response variable name as a character string.}
 }
 }
@@ -28,7 +32,9 @@ A list containing:
 Extends the analysis from \code{\link{model_extremes}} by generating forecasts
 and evaluating model residuals and forecast errors relative to the estimated
 lower extreme threshold. This helps to assess whether future values fall within
-the expected range or cross the lower extreme boundary.
+the expected range or cross the lower extreme boundary. The function allows the
+inclusion of new test data, which is combined with the training (typical) data
+to create a complete dataset for residual and forecast error analysis.
 }
 \details{
 The function performs two main tasks:
@@ -44,21 +50,32 @@ variable and the forecast mean. Both fitted and forecast errors are combined
 with labels for easy comparison and plotting.
 }
 \examples{
-\dontrun{
-library(tsibble)
-library(fable)
 
-# Assume model_extremes() has been run
-result <- model_extremes(
-  full_data = mydata,
-  typical_start = "2020-01-01",
-  typical_end = "2020-03-31",
-  response = temperature
+# Create a sample daily time series dataset (use Date, not POSIXct)
+data <- tsibble::tsibble(
+  date = seq.Date(as.Date("2020-01-01"), as.Date("2020-12-31"), by = "day"),
+  value = c(rnorm(300),rnorm(66, -3)),
+  index = date
 )
 
-test_result <- test_extremes(result, h = 200)
+# Run the model_extremes function
+result <- model_extremes(
+  full_data = data,
+  time_col = date,
+  typical_start = "2020-01-01",
+  typical_end = "2020-08-30",
+  response = value,
+  tail_prob = 0.1,
+  t_method = "boxplot"
+)
 
-test_result$all_errors
-}
+test_data <- data |>
+  dplyr::filter(date > as.Date("2020-06-30")) |>
+  dplyr::select(date, value) |>
+  tsibble::as_tsibble(index = date)
+
+test_result <- riceblast::test_extremes(result,test_data = test_data,  h = 200)
+
+test_result
 
 }

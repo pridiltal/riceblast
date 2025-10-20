@@ -39,25 +39,34 @@ The function visualizes both the model fit and the extremal analysis:
 }
 }
 \examples{
-\dontrun{
-library(tsibble)
-library(fable)
-library(ggplot2)
-
-# Run modeling and testing first
-result <- model_extremes(
-  full_data = mydata,
-  typical_start = "2020-01-01",
-  typical_end = "2020-03-31",
-  response = temperature
+# Create a sample daily time series dataset (use Date, not POSIXct)
+data <- tsibble::tsibble(
+  date = seq.Date(as.Date("2020-01-01"), as.Date("2020-12-31"), by = "day"),
+  value = c(rnorm(300),rnorm(66, -3)),
+  index = date
 )
 
-test_result <- test_extremes(result, h = 200)
+# Run the model_extremes function
+result <- model_extremes(
+  full_data = data,
+  time_col = date,
+  typical_start = "2020-01-01",
+  typical_end = "2020-08-30",
+  response = value,
+  tail_prob = 0.1,
+  t_method = "boxplot"
+)
+
+test_data <- data |>
+  dplyr::filter(date > as.Date("2020-06-30")) |>
+  dplyr::select(date, value) |>
+  tsibble::as_tsibble(index = date)
+
+test_result <- riceblast::test_extremes(result,test_data = test_data,  h = 200)
 
 # Generate and view plots
 plots <- plot_extreme_analysis(test_result)
 plots$main_plot
 plots$error_plot
-}
 
 }
