@@ -15,14 +15,22 @@
 #' @param typical_end End date-time (character or POSIXct) defining the end
 #'   of the typical observation window. (ignored if `typical_data` is provided).
 #' @param response The response variable to model, passed as an unquoted column name.
-#' @param tail_prob Numeric value (default = 0.05). Tail probability used for defining
-#'   the lower extreme threshold when `t_method = "evd"`.
+#' @param thr_prob_fit Numeric. Tail probability used to define the POT threshold for
+#'   fitting the Generalized Pareto Distribution (GPD). A larger value (e.g. 0.05)
+#'   includes more tail observations to improve parameter stability.
+#' @param thr_prob_alarm Numeric. Tail probability used when computing the lower extreme
+#'   limit from the fitted GPD. This is typically smaller than \code{thr_prob_fit}
+#'   (e.g. 0.005) to obtain a more conservative alarm threshold and reduce false positives.
 #' @param t_method Character string indicating the threshold estimation method.
 #'   Options are:
 #'   \itemize{
 #'     \item `"evd"` — estimates the threshold using the Generalized Pareto Distribution.
 #'     \item `"boxplot"` — uses the boxplot rule (1.5 × IQR below Q1) to identify lower extremes.
 #'   }
+#' @param k Numeric. Safety margin multiplier applied to the EVT-derived lower limit.
+#'   This value widens the threshold to reduce false positives by accounting for
+#'   estimation uncertainty in the tail. For example, k = 0.5 subtracts half a standard
+#'   deviation of residuals from the EVT lower limit.
 #'
 #' @details
 #' The function first subsets the input time series between `typical_start` and `typical_end`
@@ -61,7 +69,7 @@
 #'   typical_start = "2020-01-01",
 #'   typical_end = "2020-08-30",
 #'   response = value,
-#'   tail_prob = 0.1,
+#'   thr_prob_fit = 0.1,
 #'   t_method = "boxplot"
 #' )
 #'
@@ -71,14 +79,14 @@
 #' @importFrom rlang ensym as_label
 #' @importFrom fable ARIMA
 #' @importFrom dplyr filter select mutate
-#' @importFrom stats na.omit quantile IQR
+#' @importFrom stats na.omit quantile IQR sd
 #' @importFrom evd fpot qgpd
 #' @export
 #'
 model_extremes <- function(typical_data = NULL, full_data = NULL, time_col,
                            typical_start = NULL, typical_end= NULL,
-                           response, tail_prob = 0.05,
-                           t_method = c("evd", "boxplot")) {
+                           response, thr_prob_fit  = 0.05, thr_prob_alarm   =0.005,
+                           t_method = c("evd", "boxplot"), k=1) {
 
   t_method <- match.arg(t_method)
   response_sym <- rlang::ensym(response)
@@ -137,7 +145,7 @@ model_extremes <- function(typical_data = NULL, full_data = NULL, time_col,
 
   # Threshold estimation
   if (t_method == "evd") {
-    thr <- quantile(res, tail_prob)
+    thr <- quantile(res, thr_prob_fit)
     tail_data <- res[res < thr]
     if (length(tail_data) < 10) {
       stop("Too few tail observations for EVT - increase tail_prob or use boxplot method.")
@@ -145,9 +153,12 @@ model_extremes <- function(typical_data = NULL, full_data = NULL, time_col,
     fit_gpd <- evd::fpot(-res, threshold = -thr, std.err = FALSE)
     params <- fit_gpd$estimate
     lower_limit <- -evd::qgpd(
-      tail_prob, loc = -thr,
+      thr_prob_alarm, loc = -thr,
       scale = params["scale"], shape = params["shape"]
     )
+    # Adjustment with a post-hoc safety margin to reduce false positive alarms
+    lower_limit <- lower_limit - k * stats::sd(res)
+
   } else if (t_method == "boxplot") {
     Q1 <- stats::quantile(res, 0.25)
     IQR_val <- stats::IQR(res)

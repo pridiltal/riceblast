@@ -65,7 +65,7 @@ result <- model_extremes(
   typical_start = "2020-01-01",
   typical_end = "2020-08-30",
   response = value,
-  tail_prob = 0.1,
+  thr_prob_fit = 0.1,
   t_method = "boxplot"
 )
 

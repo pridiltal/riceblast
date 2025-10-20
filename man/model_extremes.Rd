@@ -11,8 +11,10 @@ model_extremes(
   typical_start = NULL,
   typical_end = NULL,
   response,
-  tail_prob = 0.05,
-  t_method = c("evd", "boxplot")
+  thr_prob_fit = 0.05,
+  thr_prob_alarm = 0.005,
+  t_method = c("evd", "boxplot"),
+  k = 1
 )
 }
 \arguments{
@@ -32,8 +34,13 @@ of the typical observation window. (ignored if `typical_data` is provided).}
 
 \item{response}{The response variable to model, passed as an unquoted column name.}
 
-\item{tail_prob}{Numeric value (default = 0.05). Tail probability used for defining
-the lower extreme threshold when `t_method = "evd"`.}
+\item{thr_prob_fit}{Numeric. Tail probability used to define the POT threshold for
+fitting the Generalized Pareto Distribution (GPD). A larger value (e.g. 0.05)
+includes more tail observations to improve parameter stability.}
+
+\item{thr_prob_alarm}{Numeric. Tail probability used when computing the lower extreme
+limit from the fitted GPD. This is typically smaller than \code{thr_prob_fit}
+(e.g. 0.005) to obtain a more conservative alarm threshold and reduce false positives.}
 
 \item{t_method}{Character string indicating the threshold estimation method.
 Options are:
@@ -41,6 +48,11 @@ Options are:
   \item `"evd"` — estimates the threshold using the Generalized Pareto Distribution.
   \item `"boxplot"` — uses the boxplot rule (1.5 × IQR below Q1) to identify lower extremes.
 }}
+
+\item{k}{Numeric. Safety margin multiplier applied to the EVT-derived lower limit.
+This value widens the threshold to reduce false positives by accounting for
+estimation uncertainty in the tail. For example, k = 0.5 subtracts half a standard
+deviation of residuals from the EVT lower limit.}
 }
 \value{
 A list containing:
@@ -85,7 +97,7 @@ result <- model_extremes(
   typical_start = "2020-01-01",
   typical_end = "2020-08-30",
   response = value,
-  tail_prob = 0.1,
+  thr_prob_fit = 0.1,
   t_method = "boxplot"
 )
 
