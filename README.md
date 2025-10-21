@@ -1,11 +1,19 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# riceblast
+# riceblast <img src="man/figures/logo.png" align="right" height="150" />
 
-<!-- badges: start -->
+[![Project Status: WIP – Initial development is in progress, but there
+has not yet been a stable, usable release suitable for the
+public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-3.0.html)
+[![minimal R
+version](https://img.shields.io/badge/R%3E%3D-4.1.0-6666ff.svg)](https://cran.r-project.org/)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.1.0-orange.svg?style=flat-square)](commits/master)
 
-<!-- badges: end -->
+------------------------------------------------------------------------
+
+[![Last-changedate](https://img.shields.io/badge/last%20change-2025--10--21-yellowgreen.svg)](/commits/master)
 
 The goal of `riceblast` is to provides data and tools for forecasting
 rice blast disease outbreaks using weather-based parameters. It combines
@@ -94,16 +102,16 @@ result <- model_extremes_uni(
 #> # A tsibble: 243 x 2 [1D]
 #>    date        value
 #>    <date>      <dbl>
-#>  1 2020-01-01 -2.14 
-#>  2 2020-01-02  2.04 
-#>  3 2020-01-03 -0.665
-#>  4 2020-01-04 -2.06 
-#>  5 2020-01-05 -0.431
-#>  6 2020-01-06  1.78 
-#>  7 2020-01-07  1.84 
-#>  8 2020-01-08  0.491
-#>  9 2020-01-09  1.03 
-#> 10 2020-01-10 -1.50 
+#>  1 2020-01-01  0.342
+#>  2 2020-01-02 -0.577
+#>  3 2020-01-03  2.22 
+#>  4 2020-01-04  2.92 
+#>  5 2020-01-05  0.546
+#>  6 2020-01-06  1.45 
+#>  7 2020-01-07  0.907
+#>  8 2020-01-08 -0.668
+#>  9 2020-01-09 -0.419
+#> 10 2020-01-10  1.38 
 #> # ℹ 233 more rows
 
 # Prepare a test dataset
