@@ -85,6 +85,12 @@
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu">pak</span><span class="op">(</span><span class="st">"pridiltal/riceblast"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="proposed-framework">Proposed framework<a class="anchor" aria-label="anchor" href="#proposed-framework"></a>
+</h2>
+<p>The following figure summarizes the proposed framework for climate-based blast disease monitoring, comprising two primary phases: an off-line phase and an on-line phase. In the off-line phase, historical climate data characterizing typical behaviour are preprocessed, and an automated model selection procedure is employed to identify the optimal univariate model for a given dataset, which are subsequently fitted to the data. Residuals from these models are then analyzed to estimate field-specific anomalous thresholds using Extreme Value Theory (EVT), providing reference points for the detection of potential disease outbreaks. In the on-line phase, incoming climate data from the test window undergoes preprocessing and forecast generation. Forecast errors are evaluated against the previously determined anomalous thresholds to classify observations as either typical or indicative of a blast alert. This two-phase approach enables both data-driven model calibration and real-time disease risk assessment.</p>
+<p><img src="reference/figures/framework.png" width="850"></p>
+</div>
+<div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
 <p>This is an example dataset available in the riceblast package. For more examples, please refer to the package vignettes.</p>
@@ -100,6 +106,79 @@
 <span><span class="co">#&gt; 4 2020-11-01 04:00:00  296.  303.  305.  2.33  0.0884 0.00000291 typical  65.3</span></span>
 <span><span class="co">#&gt; 5 2020-11-01 05:00:00  295.  304.  307.  2.43 -0.457  0.00000291 typical  56.4</span></span>
 <span><span class="co">#&gt; 6 2020-11-01 06:00:00  294.  305.  309.  2.47 -1.22   0.00000291 typical  51.4</span></span></code></pre></div>
+<p>The following example demonstrates how to identify unusually low values (lower extremes) in a daily time series using the riceblast workflow. We first fit a model on an initial “typical” period to estimate the lower extreme threshold and then test whether future observations fall below that threshold. The generated plots visualize both the detected extremes and the corresponding forecast errors.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create a sample daily time series dataset </span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">tsibble</span><span class="fu">::</span><span class="fu"><a href="https://tsibble.tidyverts.org/reference/tsibble.html" class="external-link">tsibble</a></span><span class="op">(</span></span>
+<span>  date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.Date.html" class="external-link">seq.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2020-12-31"</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"day"</span><span class="op">)</span>,</span>
+<span>  value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">300</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">66</span>, <span class="op">-</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  index <span class="op">=</span> <span class="va">date</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="co"># Fit the model to estimate the lower extreme threshold using a “typical” period</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/model_extremes_uni.html">model_extremes_uni</a></span><span class="op">(</span></span>
+<span>  full_data <span class="op">=</span> <span class="va">data</span>,</span>
+<span>  time_col <span class="op">=</span> <span class="va">date</span>,</span>
+<span>  typical_start <span class="op">=</span> <span class="st">"2020-01-01"</span>,</span>
+<span>  typical_end <span class="op">=</span> <span class="st">"2020-08-30"</span>,</span>
+<span>  response <span class="op">=</span> <span class="va">value</span>,</span>
+<span>  thr_prob_fit <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  t_method <span class="op">=</span> <span class="st">"boxplot"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tsibble: 243 x 2 [1D]</span></span>
+<span><span class="co">#&gt;    date        value</span></span>
+<span><span class="co">#&gt;    &lt;date&gt;      &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1 2020-01-01 -2.14 </span></span>
+<span><span class="co">#&gt;  2 2020-01-02  2.04 </span></span>
+<span><span class="co">#&gt;  3 2020-01-03 -0.665</span></span>
+<span><span class="co">#&gt;  4 2020-01-04 -2.06 </span></span>
+<span><span class="co">#&gt;  5 2020-01-05 -0.431</span></span>
+<span><span class="co">#&gt;  6 2020-01-06  1.78 </span></span>
+<span><span class="co">#&gt;  7 2020-01-07  1.84 </span></span>
+<span><span class="co">#&gt;  8 2020-01-08  0.491</span></span>
+<span><span class="co">#&gt;  9 2020-01-09  1.03 </span></span>
+<span><span class="co">#&gt; 10 2020-01-10 -1.50 </span></span>
+<span><span class="co">#&gt; # ℹ 233 more rows</span></span>
+<span></span>
+<span><span class="co"># Prepare a test dataset</span></span>
+<span><span class="va">test_data</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2020-06-30"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">value</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">tsibble</span><span class="fu">::</span><span class="fu"><a href="https://tsibble.tidyverts.org/reference/as-tsibble.html" class="external-link">as_tsibble</a></span><span class="op">(</span>index <span class="op">=</span> <span class="va">date</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Evaluate future values against the learned extreme threshold</span></span>
+<span><span class="va">test_result</span> <span class="op">&lt;-</span> <span class="fu">riceblast</span><span class="fu">::</span><span class="fu"><a href="reference/test_extremes_uni.html">test_extremes_uni</a></span><span class="op">(</span><span class="va">result</span>, test_data <span class="op">=</span> <span class="va">test_data</span>, h <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># # Generate and view plots for extremes and errors</span></span>
+<span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/plot_extreme_analysis_uni.html">plot_extreme_analysis_uni</a></span><span class="op">(</span><span class="va">test_result</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Plot variable not specified, automatically selected `.vars = .fitted`</span></span>
+<span></span>
+<span><span class="co"># Visualize future forecasts relative to the typical historical behaviour</span></span>
+<span><span class="va">plots</span><span class="op">$</span><span class="va">main_plot</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Visualize detected extremes using the residual and forecast error plots</span></span>
+<span><span class="va">plots</span><span class="op">$</span><span class="va">error_plot</span></span>
+<span><span class="co">#&gt; Warning: Removed 77 rows containing missing values or values outside the scale range</span></span>
+<span><span class="co">#&gt; (`geom_point()`).</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-2-2.png" width="100%"></p>
+</div>
+<div class="section level2">
+<h2 id="funding">Funding<a class="anchor" aria-label="anchor" href="#funding"></a>
+</h2>
+<p>This R package was developed under the interdisciplinary project titled “Weather-based Blast Disease Forecasting and Early Warning Systems for Climate Risk Adaptation”, funded through the National Agricultural Research Plan (NARP) initiative of the Sri Lanka Council for Agricultural Research Policy (SLCARP) -2024.</p>
+</div>
+<div class="section level2">
+<h2 id="project-team-members">Project team members<a class="anchor" aria-label="anchor" href="#project-team-members"></a>
+</h2>
+<p>Chandima Ariyarathna, Department of Botany, University of Peradeniya</p>
+<p>Priyanga Dilini Talagala, Department of Computational Mathematics, University of Moratuwa</p>
+<p>Sachith P. Abesundara, Department of Statistics and Computer Science, University of Peradeniya</p>
+<p>Mahlon Pragath Rambukkange, Department of Geography, University of Peradeniya</p>
+<p>K.R.D. Gunapala, Rice Reaserch and Development Institute, Batalagoda</p>
+<p>H.N.S. Fernando, Rice Reaserch and Development Institute, Batalagoda</p>
 </div>
 </div>
   </div>

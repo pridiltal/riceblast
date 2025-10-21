@@ -2,7 +2,7 @@
 % Please edit documentation in R/model_extremes_uni.R
 \name{model_extremes_uni}
 \alias{model_extremes_uni}
-\title{Model typical behaviour and Estimate Lower Extreme Threshold}
+\title{Model typical behaviour and estimate anomalous threshold}
 \usage{
 model_extremes_uni(
   typical_data = NULL,
@@ -83,7 +83,7 @@ Depending on the chosen `t_method`, the lower extreme threshold is estimated:
 }
 }
 \examples{
-# Create a sample daily time series dataset (use Date, not POSIXct)
+# Create a sample daily time series dataset
 data <- tsibble::tsibble(
   date = seq.Date(as.Date("2020-01-01"), as.Date("2020-12-31"), by = "day"),
   value = c(rnorm(300),rnorm(66, -3)),

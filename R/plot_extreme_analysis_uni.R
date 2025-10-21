@@ -1,4 +1,4 @@
-#' Visualize Fitted, Forecasted, and Extreme Error Patterns
+#' Produces diagnostic visualizations
 #'
 #' @description
 #' Produces diagnostic visualizations from the results of
@@ -31,7 +31,7 @@
 #' }
 #'
 #' @examples
-#' # Create a sample daily time series dataset (use Date, not POSIXct)
+#' # Create a sample daily time series dataset
 #' data <- tsibble::tsibble(
 #'   date = seq.Date(as.Date("2020-01-01"), as.Date("2020-12-31"), by = "day"),
 #'   value = c(rnorm(300),rnorm(66, -3)),

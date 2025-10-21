@@ -1,4 +1,4 @@
-#' Test Model Extremes on Fitted and Forecasted Periods
+#' Assess test set observations against estimated anomalous thresholds
 #'
 #' @description
 #' Extends the analysis from \code{\link{model_extremes_uni}} by generating forecasts
@@ -41,7 +41,7 @@
 #'
 #' @examples
 #'
-#' # Create a sample daily time series dataset (use Date, not POSIXct)
+#' # Create a sample daily time series dataset
 #' data <- tsibble::tsibble(
 #'   date = seq.Date(as.Date("2020-01-01"), as.Date("2020-12-31"), by = "day"),
 #'   value = c(rnorm(300),rnorm(66, -3)),

@@ -1,4 +1,4 @@
-#' Model typical behaviour and Estimate Lower Extreme Threshold
+#' Model typical behaviour and estimate anomalous threshold
 #'
 #' @description
 #' Fits an ARIMA model on a subset of the time series representing "typical" behavior
@@ -55,7 +55,7 @@
 #' }
 #'
 #' @examples
-#' # Create a sample daily time series dataset (use Date, not POSIXct)
+#' # Create a sample daily time series dataset
 #' data <- tsibble::tsibble(
 #'   date = seq.Date(as.Date("2020-01-01"), as.Date("2020-12-31"), by = "day"),
 #'   value = c(rnorm(300),rnorm(66, -3)),

@@ -36,6 +36,12 @@ You can install the development version of riceblast from [GitHub](https://githu
 pak::pak("pridiltal/riceblast")
 ```
 
+## Proposed framework
+
+The following figure summarizes the proposed framework for climate-based blast disease monitoring, comprising two primary phases: an off-line phase and an on-line phase. In the off-line phase, historical climate data characterizing typical behaviour are preprocessed, and an automated model selection procedure is employed to identify the optimal univariate model for a given dataset, which are subsequently fitted to the data. Residuals from these models are then analyzed to estimate field-specific anomalous thresholds using Extreme Value Theory (EVT), providing reference points for the detection of potential disease outbreaks. In the on-line phase, incoming climate data from the test window undergoes preprocessing and forecast generation. Forecast errors are evaluated against the previously determined anomalous thresholds to classify observations as either typical or indicative of a blast alert. This two-phase approach enables both data-driven model calibration and real-time disease risk assessment.
+
+<img src="man/figures/framework.png" width="850"/>
+
 ## Example
 
 
@@ -46,3 +52,64 @@ This is an example dataset available in the riceblast package. For more examples
 library(riceblast)
 head(field1)
 ```
+
+
+The following example demonstrates how to identify unusually low values (lower extremes) in a daily time series using the riceblast workflow. We first fit a model on an initial “typical” period to estimate the lower extreme threshold and then test whether future observations fall below that threshold. The generated plots visualize both the detected extremes and the corresponding forecast errors.
+
+```{r}
+# Create a sample daily time series dataset 
+data <- tsibble::tsibble(
+  date = seq.Date(as.Date("2020-01-01"), as.Date("2020-12-31"), by = "day"),
+  value = c(rnorm(300), rnorm(66, -3)),
+  index = date
+)
+
+
+# Fit the model to estimate the lower extreme threshold using a “typical” period
+result <- model_extremes_uni(
+  full_data = data,
+  time_col = date,
+  typical_start = "2020-01-01",
+  typical_end = "2020-08-30",
+  response = value,
+  thr_prob_fit = 0.1,
+  t_method = "boxplot"
+)
+
+# Prepare a test dataset
+test_data <- data |>
+  dplyr::filter(date > as.Date("2020-06-30")) |>
+  dplyr::select(date, value) |>
+  tsibble::as_tsibble(index = date)
+
+# Evaluate future values against the learned extreme threshold
+test_result <- riceblast::test_extremes_uni(result, test_data = test_data, h = 200)
+
+# # Generate and view plots for extremes and errors
+plots <- plot_extreme_analysis_uni(test_result)
+
+# Visualize future forecasts relative to the typical historical behaviour
+plots$main_plot
+
+# Visualize detected extremes using the residual and forecast error plots
+plots$error_plot
+```
+
+
+## Funding
+
+This R package was developed under the interdisciplinary project titled “Weather-based Blast Disease Forecasting and Early Warning Systems for Climate Risk Adaptation”, funded through the National Agricultural Research Plan (NARP) initiative of the Sri Lanka Council for Agricultural Research Policy (SLCARP) -2024.
+
+## Project team members
+
+Chandima Ariyarathna, Department of Botany, University of Peradeniya
+
+Priyanga Dilini Talagala, Department of Computational Mathematics, University of Moratuwa
+
+Sachith P. Abesundara, Department of Statistics and Computer Science, University of Peradeniya
+
+Mahlon Pragath Rambukkange, Department of Geography, University of Peradeniya
+
+K.R.D. Gunapala, Rice Reaserch and Development Institute, Batalagoda
+
+H.N.S. Fernando, Rice Reaserch and Development Institute, Batalagoda

@@ -1,4 +1,4 @@
-#' Field 1: Climate and Rice Blast Observations from Kilinochchi, Sri Lanka
+#' Field 1 data: Climate and rice blast observations from Kilinochchi, Sri Lanka
 #'
 #' This dataset contains historical climate and rice blast disease observations
 #' for Field 1 located in Kilinochchi, Sri Lanka (latitude 9.385680, longitude 80.538083).

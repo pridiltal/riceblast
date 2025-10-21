@@ -3,7 +3,7 @@
 \docType{data}
 \name{field1}
 \alias{field1}
-\title{Field 1: Climate and Rice Blast Observations from Kilinochchi, Sri Lanka}
+\title{Field 1 data: Climate and rice blast observations from Kilinochchi, Sri Lanka}
 \format{
 A data frame with 2880 rows and 9 variables:
 \describe{

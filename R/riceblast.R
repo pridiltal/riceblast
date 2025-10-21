@@ -1,6 +1,6 @@
 globalVariables(c("time", ".resid", ".mean", "error", "type" ))
 
-#' riceblast: Weather-Based Blast Disease Forecasting and Early Warning System
+#' riceblast: Weather-based blast disease forecasting and early warning system
 #' @description The riceblast package provides data and tools for forecasting
 #' rice blast disease outbreaks using weather-based parameters. It combines
 #' climate variables (such as temperature, humidity, and rainfall) with

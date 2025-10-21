@@ -2,7 +2,7 @@
 % Please edit documentation in R/riceblast.R
 \name{riceblast}
 \alias{riceblast}
-\title{riceblast: Weather-Based Blast Disease Forecasting and Early Warning System}
+\title{riceblast: Weather-based blast disease forecasting and early warning system}
 \description{
 The riceblast package provides data and tools for forecasting
 rice blast disease outbreaks using weather-based parameters. It combines

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_extreme_analysis_uni.R
 \name{plot_extreme_analysis_uni}
 \alias{plot_extreme_analysis_uni}
-\title{Visualize Fitted, Forecasted, and Extreme Error Patterns}
+\title{Produces diagnostic visualizations}
 \usage{
 plot_extreme_analysis_uni(analysis_result)
 }
@@ -39,7 +39,7 @@ The function visualizes both the model fit and the extremal analysis:
 }
 }
 \examples{
-# Create a sample daily time series dataset (use Date, not POSIXct)
+# Create a sample daily time series dataset
 data <- tsibble::tsibble(
   date = seq.Date(as.Date("2020-01-01"), as.Date("2020-12-31"), by = "day"),
   value = c(rnorm(300),rnorm(66, -3)),

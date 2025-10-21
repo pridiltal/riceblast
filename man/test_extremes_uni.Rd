@@ -2,7 +2,7 @@
 % Please edit documentation in R/test_extremes_uni.R
 \name{test_extremes_uni}
 \alias{test_extremes_uni}
-\title{Test Model Extremes on Fitted and Forecasted Periods}
+\title{Assess test set observations against estimated anomalous thresholds}
 \usage{
 test_extremes_uni(analysis_result, test_data, h = 1000)
 }
@@ -51,7 +51,7 @@ with labels for easy comparison and plotting.
 }
 \examples{
 
-# Create a sample daily time series dataset (use Date, not POSIXct)
+# Create a sample daily time series dataset
 data <- tsibble::tsibble(
   date = seq.Date(as.Date("2020-01-01"), as.Date("2020-12-31"), by = "day"),
   value = c(rnorm(300),rnorm(66, -3)),
