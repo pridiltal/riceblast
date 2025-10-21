@@ -62,8 +62,7 @@
 #'   index = date
 #' )
 #'
-#' # Run the model_extremes function
-#' result <- model_extremes(
+#' result <- model_extremes_uni(
 #'   full_data = data,
 #'   time_col = date,
 #'   typical_start = "2020-01-01",
@@ -83,7 +82,7 @@
 #' @importFrom evd fpot qgpd
 #' @export
 #'
-model_extremes <- function(typical_data = NULL, full_data = NULL, time_col,
+model_extremes_uni <- function(typical_data = NULL, full_data = NULL, time_col,
                            typical_start = NULL, typical_end= NULL,
                            response, thr_prob_fit  = 0.05, thr_prob_alarm   =0.005,
                            t_method = c("evd", "boxplot"), k=1) {

@@ -2,7 +2,7 @@
 #'
 #' @description
 #' Produces diagnostic visualizations from the results of
-#' \code{\link{model_extremes}} and \code{\link{test_extremes}}.
+#' \code{\link{model_extremes_uni}} and \code{\link{test_extremes_uni}}.
 #' The function generates two key plots:
 #' \itemize{
 #'   \item A time series plot of observed, fitted, and forecasted values.
@@ -11,7 +11,7 @@
 #' }
 #'
 #' @param analysis_result A list object returned by
-#'   \code{\link{test_extremes}}, containing the fitted model, forecast,
+#'   \code{\link{model_extremes_uni}}, containing the fitted model, forecast,
 #'   threshold information, and error diagnostics.
 #'
 #' @details
@@ -38,8 +38,7 @@
 #'   index = date
 #' )
 #'
-#' # Run the model_extremes function
-#' result <- model_extremes(
+#' result <- model_extremes_uni(
 #'   full_data = data,
 #'   time_col = date,
 #'   typical_start = "2020-01-01",
@@ -54,10 +53,10 @@
 #'   dplyr::select(date, value) |>
 #'   tsibble::as_tsibble(index = date)
 #'
-#' test_result <- riceblast::test_extremes(result,test_data = test_data,  h = 200)
+#' test_result <- riceblast::test_extremes_uni(result,test_data = test_data,  h = 200)
 #'
 #' # Generate and view plots
-#' plots <- plot_extreme_analysis(test_result)
+#' plots <- plot_extreme_analysis_uni(test_result)
 #' plots$main_plot
 #' plots$error_plot
 #'
@@ -66,7 +65,7 @@
 #' @importFrom rlang sym
 #' @importFrom stats fitted
 #' @export
-plot_extreme_analysis <- function(analysis_result) {
+plot_extreme_analysis_uni <- function(analysis_result) {
   fit <- analysis_result$model
   fc <- analysis_result$forecast
   full_data <- analysis_result$full_data

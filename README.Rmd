@@ -29,7 +29,7 @@ security.
 
 ## Installation
 
-You can install the development version of riceblast from [GitHub](https://github.com/) with:
+You can install the development version of riceblast from [GitHub](https://github.com/pridiltal/riceblast) with:
 
 ``` r
 # install.packages("pak")
@@ -38,9 +38,11 @@ pak::pak("pridiltal/riceblast")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
 
-```{r example}
+This is an example dataset available in the riceblast package. For more examples, please refer to the package vignettes.
+
+
+```{r example, message = FALSE, warning = FALSE}
 library(riceblast)
 head(field1)
 ```

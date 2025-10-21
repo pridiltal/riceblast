@@ -1,8 +1,8 @@
 ---
-title: "Exploring Field 1 Data"
+title: "Exploring Field 1 data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Exploring Field 1 Data}
+  %\VignetteIndexEntry{Exploring Field 1 data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

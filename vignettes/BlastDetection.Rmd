@@ -1,8 +1,8 @@
 ---
-title: "Blast Detection Framework"
+title: "Univariate blast detection framework"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Blast Detection Framework}
+  %\VignetteIndexEntry{Univariate blast detection framework}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -167,7 +167,7 @@ test_f1 <- field1 |>
 
 
 # Step 1: Fit model and compute lower extreme threshold
-analysis_result <- riceblast::model_extremes(
+analysis_result <- riceblast::model_extremes_uni(
   typical_data  = typical_f1,
   time_col = time,
   response = t2m,
@@ -176,10 +176,10 @@ analysis_result <- riceblast::model_extremes(
 )
 
 # Step 2: Forecast + test against full data
-test_result <- riceblast::test_extremes(analysis_result, test_data = test_f1, h = 1000)
+test_result <- riceblast::test_extremes_uni(analysis_result, test_data = test_f1, h = 1000)
 
 # Step 3: Visualize everything
-plots <- plot_extreme_analysis(test_result)
+plots <- plot_extreme_analysis_uni(test_result)
 ```
 
 ```{r echo = FALSE, eval = FALSE}
@@ -212,7 +212,7 @@ plots$error_plot +
 ```{r eval=FALSE }
 
 # Step 1: Fit model and compute lower extreme threshold
-analysis_result <- riceblast::model_extremes(
+analysis_result <- riceblast::model_extremes_uni(
   typical_data  = typical_f1,
   time_col = time,
   response = t2m,
@@ -220,10 +220,10 @@ analysis_result <- riceblast::model_extremes(
 )
 
 # Step 2: Forecast + test against full data
-test_result <- riceblast::test_extremes(analysis_result, test_data = test_f1, h = 1000)
+test_result <- riceblast::test_extremes_uni(analysis_result, test_data = test_f1, h = 1000)
 
 # Step 3: Visualize everything
-plots <- plot_extreme_analysis(test_result)
+plots <- plot_extreme_analysis_uni(test_result)
 ```
 
 

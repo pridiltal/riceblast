@@ -1,17 +1,17 @@
 #' Test Model Extremes on Fitted and Forecasted Periods
 #'
 #' @description
-#' Extends the analysis from \code{\link{model_extremes}} by generating forecasts
+#' Extends the analysis from \code{\link{model_extremes_uni}} by generating forecasts
 #' and evaluating model residuals and forecast errors relative to the estimated
 #' lower extreme threshold. This helps to assess whether future values fall within
 #' the expected range or cross the lower extreme boundary. The function allows the
 #' inclusion of new test data, which is combined with the training (typical) data
 #' to create a complete dataset for residual and forecast error analysis.
 #'
-#' @param analysis_result A list object returned by \code{\link{model_extremes}},
+#' @param analysis_result A list object returned by \code{\link{model_extremes_uni}},
 #'   containing the fitted model, lower limit, and related metadata.
 #' @param test_data A tsibble or data frame containing the test/forecast period
-#'   data. This will be combined with the typical_data from \code{analysis_result}
+#'   data. This will be combined with the typical_data from \code{model_extremes_uni}
 #'   to form the full dataset used for error analysis.
 #' @param h Integer. The forecast horizon, i.e., the number of future observations
 #'   to predict. Default is 1000.
@@ -31,7 +31,7 @@
 #'
 #' @return A list containing:
 #' \describe{
-#'   \item{model}{The fitted model object from \code{analysis_result}.}
+#'   \item{model}{The fitted model object from \code{model_extremes_uni}.}
 #'   \item{forecast}{A \code{fable} forecast object containing mean forecasts and intervals.}
 #'   \item{all_errors}{A \code{tsibble} containing both fitted residuals and forecast errors.}
 #'   \item{lower_limit}{The estimated lower extreme threshold (from the model analysis).}
@@ -48,8 +48,7 @@
 #'   index = date
 #' )
 #'
-#' # Run the model_extremes function
-#' result <- model_extremes(
+#' result <- model_extremes_uni(
 #'   full_data = data,
 #'   time_col = date,
 #'   typical_start = "2020-01-01",
@@ -64,7 +63,7 @@
 #'   dplyr::select(date, value) |>
 #'   tsibble::as_tsibble(index = date)
 #'
-#' test_result <- riceblast::test_extremes(result,test_data = test_data,  h = 200)
+#' test_result <- riceblast::test_extremes_uni(result,test_data = test_data,  h = 200)
 #'
 #' test_result
 #'
@@ -74,7 +73,7 @@
 #' @importFrom dplyr select mutate left_join bind_rows
 #' @importFrom rlang sym
 #' @export
-test_extremes <- function(analysis_result, test_data, h = 1000)
+test_extremes_uni <- function(analysis_result, test_data, h = 1000)
 {
   fit <- analysis_result$model
   lower_limit <- analysis_result$lower_limit
