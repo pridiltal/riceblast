@@ -50,10 +50,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/BlastDetection.html">Blast Detection Framework</a>
+      <a href="articles/BlastDetection.html">Univariate blast detection framework</a>
     </li>
     <li>
-      <a href="articles/visualization.html">Exploring Field 1 Data</a>
+      <a href="articles/visualization.html">Exploring Field 1 data</a>
     </li>
   </ul>
 </li>
@@ -79,7 +79,7 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of riceblast from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<p>You can install the development version of riceblast from <a href="https://github.com/pridiltal/riceblast" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu">pak</span><span class="op">(</span><span class="st">"pridiltal/riceblast"</span><span class="op">)</span></span></code></pre></div>
@@ -87,24 +87,19 @@
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>This is a basic example which shows you how to solve a common problem:</p>
+<p>This is an example dataset available in the riceblast package. For more examples, please refer to the package vignettes.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">riceblast</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">field1</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                  time      d2m      t2m     stl1      u10         v10</span></span>
-<span><span class="co">#&gt; 1 2020-11-01 01:00:00 297.5522 298.2703 299.3481 1.724533  0.48725891</span></span>
-<span><span class="co">#&gt; 2 2020-11-01 02:00:00 297.2091 300.0403 300.6789 1.980438  0.33197021</span></span>
-<span><span class="co">#&gt; 3 2020-11-01 03:00:00 296.5240 301.8020 303.1999 2.288300  0.20007324</span></span>
-<span><span class="co">#&gt; 4 2020-11-01 04:00:00 295.8354 303.0580 305.2274 2.332153  0.08836365</span></span>
-<span><span class="co">#&gt; 5 2020-11-01 05:00:00 294.6398 304.3468 307.4920 2.431274 -0.45683289</span></span>
-<span><span class="co">#&gt; 6 2020-11-01 06:00:00 293.9607 305.2316 309.0625 2.470993 -1.21669006</span></span>
-<span><span class="co">#&gt;             tp    type       RH</span></span>
-<span><span class="co">#&gt; 1 0.000000e+00 typical 95.80187</span></span>
-<span><span class="co">#&gt; 2 1.017004e-06 typical 84.51785</span></span>
-<span><span class="co">#&gt; 3 2.481043e-06 typical 73.17257</span></span>
-<span><span class="co">#&gt; 4 2.909452e-06 typical 65.27463</span></span>
-<span><span class="co">#&gt; 5 2.913177e-06 typical 56.37305</span></span>
-<span><span class="co">#&gt; 6 2.913177e-06 typical 51.42245</span></span></code></pre></div>
+<span><span class="co">#&gt; # A tibble: 6 × 9</span></span>
+<span><span class="co">#&gt;   time                  d2m   t2m  stl1   u10     v10         tp type       RH</span></span>
+<span><span class="co">#&gt;   &lt;dttm&gt;              &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 2020-11-01 01:00:00  298.  298.  299.  1.72  0.487  0          typical  95.8</span></span>
+<span><span class="co">#&gt; 2 2020-11-01 02:00:00  297.  300.  301.  1.98  0.332  0.00000102 typical  84.5</span></span>
+<span><span class="co">#&gt; 3 2020-11-01 03:00:00  297.  302.  303.  2.29  0.200  0.00000248 typical  73.2</span></span>
+<span><span class="co">#&gt; 4 2020-11-01 04:00:00  296.  303.  305.  2.33  0.0884 0.00000291 typical  65.3</span></span>
+<span><span class="co">#&gt; 5 2020-11-01 05:00:00  295.  304.  307.  2.43 -0.457  0.00000291 typical  56.4</span></span>
+<span><span class="co">#&gt; 6 2020-11-01 06:00:00  294.  305.  309.  2.47 -1.22   0.00000291 typical  51.4</span></span></code></pre></div>
 </div>
 </div>
   </div>
