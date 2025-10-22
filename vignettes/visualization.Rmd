@@ -26,7 +26,7 @@ library(sf)
 
 This dataset contains historical climate and rice blast disease observations for Field 1 located in Kilinochchi, Sri Lanka (latitude 9.385680, longitude 80.538083). The data were collected from the Copernicus EU Earth Observation Program (https://www.copernicus.eu/en), which integrates satellite and ground-based information to provide global climate coverage, and supplemented with rice blast disease records obtained from the Department of Agriculture, Sri Lanka. Field visits were conducted during the 2020/2021 “Maha” season when blast outbreaks were reported. Farmers observed that under favorable environmental conditions, complete field infection occurred within 24–48 hours after the appearance of initial symptoms.
 
-```{r}
+```{r map , fig.height=8,  fig.width= 6}
 data(district)
 p <- ggplot(district) +
   geom_sf()

@@ -172,7 +172,7 @@ analysis_result <- riceblast::model_extremes_uni(
   time_col = time,
   response = t2m,
   t_method = "evd",
-  k=2
+  k=1.5
 )
 
 # Step 2: Forecast + test against full data
@@ -202,9 +202,16 @@ plots$main_plot
 
 
 ```{r}
-plots$error_plot +
+p<- plots$error_plot +
     geom_vline(aes(xintercept = as.POSIXct("2021-02-12 00:00:00", tz = "UTC")),
              color = "red", linetype = "dashed")
+
+print(p)
+```
+
+
+```{r}
+plotly::ggplotly(p)
 ```
 
 

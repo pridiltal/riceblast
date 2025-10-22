@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 [![Last-changedate](https://img.shields.io/badge/last%20change-`r gsub('-', '--', Sys.Date())`-yellowgreen.svg)](/commits/master)
 
 
-The goal of `riceblast` is to provides data and tools for forecasting
+The goal of the `riceblast` R package is to provides data and tools for forecasting
 rice blast disease outbreaks using weather-based parameters. It combines
 climate variables (such as temperature, humidity, and rainfall) with
 knowledge of disease development to build predictive models and early
@@ -61,7 +61,7 @@ head(field1)
 ```
 
 
-The following example demonstrates how to identify unusually low values (lower extremes) in a daily time series using the riceblast workflow. We first fit a model on an initial “typical” period to estimate the lower extreme threshold and then test whether future observations fall below that threshold. The generated plots visualize both the detected extremes and the corresponding forecast errors.
+The following example demonstrates the detection of unusually low values (lower extremes) in a daily time series, using a synthetic dataset processed through the `riceblast` workflow. We first fit a model on an initial “typical” period to estimate the lower extreme threshold and then test whether future observations fall below that threshold. The generated plots visualize both the detected extremes and the corresponding forecast errors.
 
 ```{r}
 # Create a sample daily time series dataset 
