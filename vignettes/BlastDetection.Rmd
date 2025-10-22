@@ -175,7 +175,11 @@ test_f1 <- field1 |>
 ```
 
 
-The `riceblast` framework for univariate analysis involves three main steps. First, the typical behaviour is modelled and the lower extreme threshold is computed from the observed data using the `model_extremes_uni()` function. Next, future values are forecasted and compared against the test-phase data to identify potential blast events using the `test_extremes_uni()` function. Finally, the results, including thresholds and detected extremes, are visualized to facilitate interpretation and analysis using the `plot_extreme_analysis_uni()` function.
+As illustrated in the figure below, the riceblast package operationalizes the univariate analysis framework through three key functions.
+
+![](man/figures/packageflow.png)
+
+First, the typical behaviour is modelled and the lower extreme threshold is computed from the observed data using the `model_extremes_uni()` function. Next, future values are forecasted and compared against the test-phase data to identify potential blast events using the `test_extremes_uni()` function. Finally, the results, including thresholds and detected extremes, are visualized to facilitate interpretation and analysis using the `plot_extreme_analysis_uni()` function.
 
 The following code performs EVT-based threshold calculation to detect potential blast disease events. In the `riceblast` framework, the user can adjust the EVT-derived lower extreme threshold using a safety margin multiplier ($k$) to account for the inherent uncertainty in tail data modeling. EVT focuses on modeling the tail of the distribution, where data is sparse, which can lead to overfitting and underestimation of variability. Applying a safety margin, such as $k = 1.5$, widens the threshold, thereby reducing the risk of false positives by incorporating this uncertainty. This approach aligns with established practices in EVT applications, where threshold adjustments help mitigate the effects of estimation errors in extreme value predictions. Setting $k = 0$ returns the original EVT-derived threshold without any modification.
 
