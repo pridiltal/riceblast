@@ -15,7 +15,7 @@ version](https://img.shields.io/badge/R%3E%3D-4.1.0-6666ff.svg)](https://cran.r-
 
 [![Last-changedate](https://img.shields.io/badge/last%20change-2025--10--22-yellowgreen.svg)](/commits/master)
 
-The goal of the `riceblast` R package is to provides data and tools for
+The goal of the `riceblast` R package is to provide data and tools for
 forecasting rice blast disease outbreaks using weather-based parameters.
 It combines climate variables (such as temperature, humidity, and
 rainfall) with knowledge of disease development to build predictive
@@ -103,16 +103,16 @@ result <- model_extremes_uni(
 #> # A tsibble: 243 x 2 [1D]
 #>    date         value
 #>    <date>       <dbl>
-#>  1 2020-01-01  0.178 
-#>  2 2020-01-02 -2.95  
-#>  3 2020-01-03 -0.0388
-#>  4 2020-01-04  0.141 
-#>  5 2020-01-05 -0.0248
-#>  6 2020-01-06 -0.758 
-#>  7 2020-01-07 -1.16  
-#>  8 2020-01-08 -0.517 
-#>  9 2020-01-09 -0.847 
-#> 10 2020-01-10  0.837 
+#>  1 2020-01-01 -0.111 
+#>  2 2020-01-02 -1.08  
+#>  3 2020-01-03 -0.190 
+#>  4 2020-01-04 -0.752 
+#>  5 2020-01-05 -0.468 
+#>  6 2020-01-06 -0.104 
+#>  7 2020-01-07 -0.452 
+#>  8 2020-01-08 -0.0192
+#>  9 2020-01-09 -1.07  
+#> 10 2020-01-10  0.727 
 #> # ℹ 233 more rows
 
 # Prepare a test dataset

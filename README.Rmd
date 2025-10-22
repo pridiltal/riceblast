@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 [![Last-changedate](https://img.shields.io/badge/last%20change-`r gsub('-', '--', Sys.Date())`-yellowgreen.svg)](/commits/master)
 
 
-The goal of the `riceblast` R package is to provides data and tools for forecasting
+The goal of the `riceblast` R package is to provide data and tools for forecasting
 rice blast disease outbreaks using weather-based parameters. It combines
 climate variables (such as temperature, humidity, and rainfall) with
 knowledge of disease development to build predictive models and early
