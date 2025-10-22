@@ -5,6 +5,8 @@ vignette: >
   %\VignetteIndexEntry{Univariate blast detection framework}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+resource_files:
+  - images/packageflow.png
 ---
 
 ```{r, include = FALSE}
@@ -177,7 +179,9 @@ test_f1 <- field1 |>
 
 As illustrated in the figure below, the riceblast package operationalizes the univariate analysis framework through three key functions.
 
-![](man/figures/packageflow.png)
+```{r diagram, echo=FALSE, fig.align="center", out.width="100%"}
+knitr::include_graphics("images/packageflow.png")
+```
 
 First, the typical behaviour is modelled and the lower extreme threshold is computed from the observed data using the `model_extremes_uni()` function. Next, future values are forecasted and compared against the test-phase data to identify potential blast events using the `test_extremes_uni()` function. Finally, the results, including thresholds and detected extremes, are visualized to facilitate interpretation and analysis using the `plot_extreme_analysis_uni()` function.
 
