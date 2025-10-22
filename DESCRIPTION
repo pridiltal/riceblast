@@ -38,5 +38,6 @@ Suggests:
     tidyverse,
     lubridate,
     ggtime,
-    urca
+    urca,
+    plotly
 VignetteBuilder: knitr
