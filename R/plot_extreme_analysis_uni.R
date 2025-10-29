@@ -70,6 +70,7 @@ plot_extreme_analysis_uni <- function(analysis_result) {
   fc <- analysis_result$forecast
   full_data <- analysis_result$full_data
   lower_limit <- analysis_result$lower_limit
+  upper_limit <- analysis_result$upper_limit
   all_errors <- analysis_result$all_errors
   response <- analysis_result$response
   threshold_method <- analysis_result$threshold_method
@@ -98,6 +99,7 @@ plot_extreme_analysis_uni <- function(analysis_result) {
     ggplot2::geom_point(alpha = 0.5) +
     ggplot2::geom_hline(yintercept = 0, colour = "black") +
     ggplot2::geom_hline(yintercept = lower_limit, colour = "red", linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = upper_limit, colour = "red", linetype = "dashed") +
     ggplot2::labs(
       title = glue::glue(
         "Residuals and Forecast Errors (Lower Limit by {toupper(threshold_method)})"

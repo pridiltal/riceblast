@@ -35,6 +35,7 @@
 #'   \item{forecast}{A \code{fable} forecast object containing mean forecasts and intervals.}
 #'   \item{all_errors}{A \code{tsibble} containing both fitted residuals and forecast errors.}
 #'   \item{lower_limit}{The estimated lower extreme threshold (from the model analysis).}
+#'   \item{upper_limit}{The estimated upper extreme threshold (from the model analysis).}
 #'   \item{full_data}{The combined dataset consisting of \code{typical_data} and \code{test_data}.}
 #'   \item{response}{The response variable name as a character string.}
 #' }
@@ -77,6 +78,7 @@ test_extremes_uni <- function(analysis_result, test_data, h = 1000)
 {
   fit <- analysis_result$model
   lower_limit <- analysis_result$lower_limit
+  upper_limit <- analysis_result$upper_limit
   typical_data <- analysis_result$typical_data
   response <- analysis_result$response
   time_col    <- analysis_result$time_col
@@ -121,6 +123,7 @@ test_extremes_uni <- function(analysis_result, test_data, h = 1000)
     forecast    = fc,
     all_errors  = all_errors,
     lower_limit = lower_limit,
+    upper_limit = upper_limit,
     full_data   = full_data,
     response = rlang::as_label(response_sym),
     time_col = rlang::as_string(time_sym)

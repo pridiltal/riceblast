@@ -13,7 +13,7 @@ version](https://img.shields.io/badge/R%3E%3D-4.1.0-6666ff.svg)](https://cran.r-
 
 ------------------------------------------------------------------------
 
-[![Last-changedate](https://img.shields.io/badge/last%20change-2025--10--22-yellowgreen.svg)](/commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2025--10--29-yellowgreen.svg)](/commits/master)
 
 The goal of the `riceblast` R package is to provide data and tools for
 forecasting rice blast disease outbreaks using weather-based parameters.
@@ -82,10 +82,14 @@ generated plots visualize both the detected extremes and the
 corresponding forecast errors.
 
 ``` r
-# Create a sample daily time series dataset 
+# Create a sample daily time series dataset with a gradual level shift
+base_vals <- rnorm(300)
+gradual_shift <- seq(from = 0, to = -3, length.out = 66)
+vals <- c(base_vals, rnorm(66) + gradual_shift)
+
 data <- tsibble::tsibble(
   date = seq.Date(as.Date("2020-01-01"), as.Date("2020-12-31"), by = "day"),
-  value = c(rnorm(300), rnorm(66, -3)),
+  value = vals,
   index = date
 )
 
@@ -98,21 +102,22 @@ result <- model_extremes_uni(
   typical_end = "2020-08-30",
   response = value,
   thr_prob_fit = 0.1,
-  t_method = "boxplot"
+  t_method = "evd",
+  k=0
 )
 #> # A tsibble: 243 x 2 [1D]
-#>    date         value
-#>    <date>       <dbl>
-#>  1 2020-01-01 -0.111 
-#>  2 2020-01-02 -1.08  
-#>  3 2020-01-03 -0.190 
-#>  4 2020-01-04 -0.752 
-#>  5 2020-01-05 -0.468 
-#>  6 2020-01-06 -0.104 
-#>  7 2020-01-07 -0.452 
-#>  8 2020-01-08 -0.0192
-#>  9 2020-01-09 -1.07  
-#> 10 2020-01-10  0.727 
+#>    date        value
+#>    <date>      <dbl>
+#>  1 2020-01-01  0.642
+#>  2 2020-01-02 -1.15 
+#>  3 2020-01-03 -0.384
+#>  4 2020-01-04 -1.15 
+#>  5 2020-01-05 -0.785
+#>  6 2020-01-06 -0.948
+#>  7 2020-01-07 -0.369
+#>  8 2020-01-08  1.15 
+#>  9 2020-01-09 -0.150
+#> 10 2020-01-10  1.10 
 #> # ℹ 233 more rows
 
 # Prepare a test dataset
@@ -165,6 +170,11 @@ University of Peradeniya
 Mahlon Pragath Rambukkange, Department of Geography, University of
 Peradeniya
 
+Isuru Madugalla, Department of Statistics & Computer Science, University
+of Peradeniya.
+
 K.R.D. Gunapala, Rice Reaserch and Development Institute, Batalagoda
 
 H.N.S. Fernando, Rice Reaserch and Development Institute, Batalagoda
+
+Shashika Weerakoon, University of Peradeniya.

@@ -59,6 +59,7 @@ A list containing:
 \describe{
   \item{model}{The fitted ARIMA model object.}
   \item{lower_limit}{The estimated lower extreme threshold.}
+  \item{upper_limit}{The estimated upper extreme threshold.}
   \item{threshold_method}{The threshold estimation method used (`"evd"` or `"boxplot"`).}
   \item{typical_data}{The subset of the time series used for model fitting.}
   \item{response}{The response variable name.}

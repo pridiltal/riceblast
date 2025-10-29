@@ -48,6 +48,7 @@
 #' \describe{
 #'   \item{model}{The fitted ARIMA model object.}
 #'   \item{lower_limit}{The estimated lower extreme threshold.}
+#'   \item{upper_limit}{The estimated upper extreme threshold.}
 #'   \item{threshold_method}{The threshold estimation method used (`"evd"` or `"boxplot"`).}
 #'   \item{typical_data}{The subset of the time series used for model fitting.}
 #'   \item{response}{The response variable name.}
@@ -144,11 +145,15 @@ model_extremes_uni <- function(typical_data = NULL, full_data = NULL, time_col,
 
   # Threshold estimation
   if (t_method == "evd") {
+
+    # compute left tail threshold for EVT fitting
     thr <- quantile(res, thr_prob_fit)
     tail_data <- res[res < thr]
     if (length(tail_data) < 10) {
       stop("Too few tail observations for EVT - increase tail_prob or use boxplot method.")
     }
+
+    # Fit a right-tail model on left-tail extreme
     fit_gpd <- evd::fpot(-res, threshold = -thr, std.err = FALSE)
     params <- fit_gpd$estimate
     lower_limit <- -evd::qgpd(
@@ -158,15 +163,36 @@ model_extremes_uni <- function(typical_data = NULL, full_data = NULL, time_col,
     # Adjustment with a post-hoc safety margin to reduce false positive alarms
     lower_limit <- lower_limit - k * stats::sd(res)
 
+    # compute right tail threshold for EVT fitting
+    thr_upper <- quantile(res, 1 - thr_prob_fit)
+
+    tail_data_upper <- res[res > thr_upper]
+    if (length(tail_data_upper) < 10) {
+      stop("Too few upper tail observations for EVT - increase tail_prob or use boxplot method.")
+    }
+
+    fit_gpd_upper <- evd::fpot(res, threshold = thr_upper, std.err = FALSE)
+    params_u <- fit_gpd_upper$estimate
+    upper_limit <- evd::qgpd(
+      1 - thr_prob_alarm, loc = thr_upper,
+      scale = params_u["scale"], shape = params_u["shape"]
+    )
+
+    # Posterior safety adjustment (symmetric to lower limit logic)
+    upper_limit <- upper_limit + k * stats::sd(res)
+
   } else if (t_method == "boxplot") {
-    Q1 <- stats::quantile(res, 0.25)
-    IQR_val <- stats::IQR(res)
+    Q1 <- stats::quantile(res, 0.25, na.rm = TRUE)
+    Q3 <- stats::quantile(res, 0.75, na.rm = TRUE)
+    IQR_val <- stats::IQR(res, na.rm = TRUE)
     lower_limit <- Q1 - 1.5 * IQR_val
+    upper_limit <- Q3 + 1.5 * IQR_val
   }
 
   list(
     model = fit,
     lower_limit = lower_limit,
+    upper_limit = upper_limit,
     threshold_method = t_method,
     typical_data = typical_data,
     response = rlang::as_label(response_sym),

@@ -24,6 +24,7 @@ A list containing:
   \item{forecast}{A \code{fable} forecast object containing mean forecasts and intervals.}
   \item{all_errors}{A \code{tsibble} containing both fitted residuals and forecast errors.}
   \item{lower_limit}{The estimated lower extreme threshold (from the model analysis).}
+  \item{upper_limit}{The estimated upper extreme threshold (from the model analysis).}
   \item{full_data}{The combined dataset consisting of \code{typical_data} and \code{test_data}.}
   \item{response}{The response variable name as a character string.}
 }

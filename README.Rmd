@@ -64,10 +64,14 @@ head(field1)
 The following example demonstrates the detection of unusually low values (lower extremes) in a daily time series, using a synthetic dataset processed through the `riceblast` workflow. We first fit a model on an initial “typical” period to estimate the lower extreme threshold and then test whether future observations fall below that threshold. The generated plots visualize both the detected extremes and the corresponding forecast errors.
 
 ```{r}
-# Create a sample daily time series dataset 
+# Create a sample daily time series dataset with a gradual level shift
+base_vals <- rnorm(300)
+gradual_shift <- seq(from = 0, to = -3, length.out = 66)
+vals <- c(base_vals, rnorm(66) + gradual_shift)
+
 data <- tsibble::tsibble(
   date = seq.Date(as.Date("2020-01-01"), as.Date("2020-12-31"), by = "day"),
-  value = c(rnorm(300), rnorm(66, -3)),
+  value = vals,
   index = date
 )
 
@@ -80,7 +84,8 @@ result <- model_extremes_uni(
   typical_end = "2020-08-30",
   response = value,
   thr_prob_fit = 0.1,
-  t_method = "boxplot"
+  t_method = "evd",
+  k=0
 )
 
 # Prepare a test dataset
@@ -117,6 +122,10 @@ Sachith P. Abesundara, Department of Statistics and Computer Science, University
 
 Mahlon Pragath Rambukkange, Department of Geography, University of Peradeniya
 
+Isuru Madugalla, Department of Statistics & Computer Science, University of Peradeniya.
+
 K.R.D. Gunapala, Rice Reaserch and Development Institute, Batalagoda
 
 H.N.S. Fernando, Rice Reaserch and Development Institute, Batalagoda
+
+Shashika Weerakoon, University of Peradeniya.
