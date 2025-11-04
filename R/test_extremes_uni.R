@@ -64,7 +64,7 @@
 #'   dplyr::select(date, value) |>
 #'   tsibble::as_tsibble(index = date)
 #'
-#' test_result <- riceblast::test_extremes_uni(result,test_data = test_data,  h = 200)
+#' test_result <- cropguard::test_extremes_uni(result,test_data = test_data,  h = 200)
 #'
 #' test_result
 #'

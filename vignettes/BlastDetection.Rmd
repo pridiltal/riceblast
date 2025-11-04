@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(riceblast)
+library(cropguard)
 library(ceylon)
 library(tidyverse)
 library(sf)
@@ -167,7 +167,7 @@ Since the data is recorded hourly, a 24-hour seasonal pattern is observed. The f
   ggtime::gg_tsdisplay(diff, plot_type = 'partial')
 ```
 
-The univariate `riceblast` framework first builds a model for the plant’s typical behaviour and then forecasts the expected future values for the test-phase window. The following code defines the test window for potential blast detection:
+The univariate `CropGuard` framework first builds a model for the plant’s typical behaviour and then forecasts the expected future values for the test-phase window. The following code defines the test window for potential blast detection:
 
 ```{r}
 test_f1 <- field1 |>
@@ -177,7 +177,7 @@ test_f1 <- field1 |>
 ```
 
 
-As illustrated in the figure below, the riceblast package operationalizes the univariate analysis framework through three key functions.
+As illustrated in the figure below, the `cropguard` package operationalizes the univariate analysis framework through three key functions.
 
 ```{r diagram, echo=FALSE, fig.align="center", out.width="100%"}
 knitr::include_graphics("images/packageflow.png")
@@ -185,12 +185,12 @@ knitr::include_graphics("images/packageflow.png")
 
 First, the typical behaviour is modelled and the lower extreme threshold is computed from the observed data using the `model_extremes_uni()` function. Next, future values are forecasted and compared against the test-phase data to identify potential blast events using the `test_extremes_uni()` function. Finally, the results, including thresholds and detected extremes, are visualized to facilitate interpretation and analysis using the `plot_extreme_analysis_uni()` function.
 
-The following code performs EVT-based threshold calculation to detect potential blast disease events. In the `riceblast` framework, the user can adjust the EVT-derived lower extreme threshold using a safety margin multiplier ($k$) to account for the inherent uncertainty in tail data modeling. EVT focuses on modeling the tail of the distribution, where data is sparse, which can lead to overfitting and underestimation of variability. Applying a safety margin, such as $k = 1.5$, widens the threshold, thereby reducing the risk of false positives by incorporating this uncertainty. This approach aligns with established practices in EVT applications, where threshold adjustments help mitigate the effects of estimation errors in extreme value predictions. Setting $k = 0$ returns the original EVT-derived threshold without any modification.
+The following code performs EVT-based threshold calculation to detect potential blast disease events. In the `CropGuard` framework, the user can adjust the EVT-derived lower extreme threshold using a safety margin multiplier ($k$) to account for the inherent uncertainty in tail data modeling. EVT focuses on modeling the tail of the distribution, where data is sparse, which can lead to overfitting and underestimation of variability. Applying a safety margin, such as $k = 1.5$, widens the threshold, thereby reducing the risk of false positives by incorporating this uncertainty. This approach aligns with established practices in EVT applications, where threshold adjustments help mitigate the effects of estimation errors in extreme value predictions. Setting $k = 0$ returns the original EVT-derived threshold without any modification.
 
 ```{r eval = FALSE}
 
 # Step 1: Fit model and compute lower extreme threshold
-analysis_result <- riceblast::model_extremes_uni(
+analysis_result <- cropguard::model_extremes_uni(
   typical_data  = typical_f1,
   time_col = time,
   response = t2m,
@@ -199,7 +199,7 @@ analysis_result <- riceblast::model_extremes_uni(
 )
 
 # Step 2: Forecast + test against full data
-test_result <- riceblast::test_extremes_uni(analysis_result, test_data = test_f1, h = 1000)
+test_result <- cropguard::test_extremes_uni(analysis_result, test_data = test_f1, h = 1000)
 
 # Step 3: Visualize everything
 plots <- plot_extreme_analysis_uni(test_result)
@@ -212,9 +212,9 @@ saveRDS(plots, here::here("inst","extdata", "plots_example_evd.rds"))
 ```
 
 ```{r echo=FALSE}
-analysis_result <- readRDS(system.file("extdata", "analysis_example_evd.rds", package = "riceblast"))
-test_result <- readRDS(system.file("extdata", "test_result_example_evd.rds", package = "riceblast"))
-plots <- readRDS(system.file("extdata", "plots_example_evd.rds", package = "riceblast"))
+analysis_result <- readRDS(system.file("extdata", "analysis_example_evd.rds", package = "cropguard"))
+test_result <- readRDS(system.file("extdata", "test_result_example_evd.rds", package = "cropguard"))
+plots <- readRDS(system.file("extdata", "plots_example_evd.rds", package = "cropguard"))
 ```
 
 The following plot (`main_plot`) is a `ggplot`2 object displaying the observed, fitted, and forecasted series during both the offline phase and the online phase of the analysis.
@@ -247,7 +247,7 @@ For comparative purposes, a threshold calculation using the boxplot “outlier w
 ```{r eval=FALSE }
 
 # Step 1: Fit model and compute lower extreme threshold
-analysis_result <- riceblast::model_extremes_uni(
+analysis_result <- cropguard::model_extremes_uni(
   typical_data  = typical_f1,
   time_col = time,
   response = t2m,
@@ -255,7 +255,7 @@ analysis_result <- riceblast::model_extremes_uni(
 )
 
 # Step 2: Forecast + test against full data
-test_result <- riceblast::test_extremes_uni(analysis_result, test_data = test_f1, h = 1000)
+test_result <- cropguard::test_extremes_uni(analysis_result, test_data = test_f1, h = 1000)
 
 # Step 3: Visualize everything
 plots <- plot_extreme_analysis_uni(test_result)
@@ -269,9 +269,9 @@ saveRDS(plots, here::here("inst","extdata", "plots_example_boxplot.rds"))
 ```
 
 ```{r echo=FALSE}
-analysis_result <- readRDS(system.file("extdata", "analysis_example_boxplot.rds", package = "riceblast"))
-test_result <- readRDS(system.file("extdata", "test_result_example_boxplot.rds", package = "riceblast"))
-plots <- readRDS(system.file("extdata", "plots_example_boxplot.rds", package = "riceblast"))
+analysis_result <- readRDS(system.file("extdata", "analysis_example_boxplot.rds", package = "cropguard"))
+test_result <- readRDS(system.file("extdata", "test_result_example_boxplot.rds", package = "cropguard"))
+plots <- readRDS(system.file("extdata", "plots_example_boxplot.rds", package = "cropguard"))
 ```
 
 

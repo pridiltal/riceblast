@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# riceblast <img src="man/figures/logo.png" align="right" height="200" width="200" />
+# cropguard <img src="man/figures/logo.png" align="right" height="200" width="200" />
 
 [![Project Status: WIP – Initial development is in progress, but there
 has not yet been a stable, usable release suitable for the
@@ -13,25 +13,29 @@ version](https://img.shields.io/badge/R%3E%3D-4.1.0-6666ff.svg)](https://cran.r-
 
 ------------------------------------------------------------------------
 
-[![Last-changedate](https://img.shields.io/badge/last%20change-2025--10--29-yellowgreen.svg)](/commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2025--11--04-yellowgreen.svg)](/commits/master)
 
-The goal of the `riceblast` R package is to provide data and tools for
+The goal of the `cropguard` R package is to provide data and tools for
 forecasting rice blast disease outbreaks using weather-based parameters.
 It combines climate variables (such as temperature, humidity, and
 rainfall) with knowledge of disease development to build predictive
-models and early warning systems. The package helps researchers,
-agronomists, and policymakers understand and anticipate disease risks,
-supporting sustainable management strategies to reduce crop losses and
-improve food security.
+models and early warning systems. the `cropguard` package implements a
+tool for accurate and timely disease forecasting based on realtime
+weather data. The package helps researchers, agronomists, and
+policymakers understand and anticipate disease risks, supporting
+sustainable management strategies to reduce crop losses and improve food
+security. This platform fosters a supportive network of plant pathogen
+surveillance stakeholders, working together to advance agricultural
+health.
 
 ## Installation
 
-You can install the development version of riceblast from
-[GitHub](https://github.com/pridiltal/riceblast) with:
+You can install the development version of cropguard from
+[GitHub](https://github.com/pridiltal/cropguard) with:
 
 ``` r
 # install.packages("pak")
-pak::pak("pridiltal/riceblast")
+pak::pak("pridiltal/cropguard")
 ```
 
 ## Proposed framework
@@ -45,22 +49,22 @@ model for a given dataset, which are subsequently fitted to the data.
 Residuals from these models are then analyzed to estimate field-specific
 anomalous thresholds using Extreme Value Theory (EVT), providing
 reference points for the detection of potential disease outbreaks. In
-the on-line phase, incoming climate data from the test window undergoes
-preprocessing and forecast generation. Forecast errors are evaluated
-against the previously determined anomalous thresholds to classify
-observations as either typical or indicative of a blast alert. This
-two-phase approach enables both data-driven model calibration and
+the on-line phase, incoming real time climate data from the test window
+undergoes preprocessing and forecast generation. Forecast errors are
+evaluated against the previously determined anomalous thresholds to
+classify observations as either typical or indicative of a blast alert.
+This two-phase approach enables both data-driven model calibration and
 real-time disease risk assessment.
 
 <img src="man/figures/framework.png" width="850"/>
 
 ## Example
 
-This is an example dataset available in the riceblast package. For more
-examples, please refer to the package vignettes.
+This is an example dataset available in the `cropguard` package. For
+more examples, please refer to the package vignettes.
 
 ``` r
-library(riceblast)
+library(cropguard)
 head(field1)
 #> # A tibble: 6 × 9
 #>   time                  d2m   t2m  stl1   u10     v10         tp type       RH
@@ -73,13 +77,13 @@ head(field1)
 #> 6 2020-11-01 06:00:00  294.  305.  309.  2.47 -1.22   0.00000291 typical  51.4
 ```
 
-The following example demonstrates the detection of unusually low values
-(lower extremes) in a daily time series, using a synthetic dataset
-processed through the `riceblast` workflow. We first fit a model on an
-initial “typical” period to estimate the lower extreme threshold and
-then test whether future observations fall below that threshold. The
-generated plots visualize both the detected extremes and the
-corresponding forecast errors.
+The following example demonstrates the detection of unusually low or
+high values (lower or upper extremes) in a daily time series, using a
+synthetic dataset processed through the `CropGuard` workflow. We first
+fit a model on an initial “typical” period to estimate the lower and
+upper extreme thresholds and then test whether future observations fall
+outside those thresholds. The generated plots visualize both the
+detected extremes and the corresponding forecast errors.
 
 ``` r
 # Create a sample daily time series dataset with a gradual level shift
@@ -108,16 +112,16 @@ result <- model_extremes_uni(
 #> # A tsibble: 243 x 2 [1D]
 #>    date         value
 #>    <date>       <dbl>
-#>  1 2020-01-01  0.658 
-#>  2 2020-01-02 -1.90  
-#>  3 2020-01-03  0.265 
-#>  4 2020-01-04  0.906 
-#>  5 2020-01-05  0.0475
-#>  6 2020-01-06  1.61  
-#>  7 2020-01-07 -0.256 
-#>  8 2020-01-08 -0.680 
-#>  9 2020-01-09  0.346 
-#> 10 2020-01-10 -0.498 
+#>  1 2020-01-01 -1.77  
+#>  2 2020-01-02 -0.0390
+#>  3 2020-01-03  0.228 
+#>  4 2020-01-04 -0.0954
+#>  5 2020-01-05  0.125 
+#>  6 2020-01-06  0.637 
+#>  7 2020-01-07 -1.75  
+#>  8 2020-01-08 -0.123 
+#>  9 2020-01-09 -0.0691
+#> 10 2020-01-10  1.07  
 #> # ℹ 233 more rows
 
 # Prepare a test dataset
@@ -127,7 +131,7 @@ test_data <- data |>
   tsibble::as_tsibble(index = date)
 
 # Evaluate future values against the learned extreme threshold
-test_result <- riceblast::test_extremes_uni(result, test_data = test_data, h = 200)
+test_result <- cropguard::test_extremes_uni(result, test_data = test_data, h = 200)
 
 # # Generate and view plots for extremes and errors
 plots <- plot_extreme_analysis_uni(test_result)
@@ -159,22 +163,26 @@ Agricultural Research Policy (SLCARP) -2024.
 
 ## Project team members
 
-Chandima Ariyarathna, Department of Botany, University of Peradeniya
-
 Priyanga Dilini Talagala, Department of Computational Mathematics,
-University of Moratuwa
-
-Sachith P. Abesundara, Department of Statistics and Computer Science,
-University of Peradeniya
+University of Moratuwa. Lead developer of the R package.
 
 Mahlon Pragath Rambukkange, Department of Geography, University of
 Peradeniya
 
+Sachith P. Abesundara, Department of Statistics and Computer Science,
+University of Peradeniya
+
 Isuru Madugalla, Department of Statistics & Computer Science, University
 of Peradeniya.
 
-K.R.D. Gunapala, Rice Reaserch and Development Institute, Batalagoda
+Shashika Weerakoon, Postgraduate Institute of Science, University of
+Peradeniya
 
 H.N.S. Fernando, Rice Reaserch and Development Institute, Batalagoda
 
-Shashika Weerakoon, University of Peradeniya.
+Dulakshi Pabasara, Department of Botany, University of Peradeniya
+
+Chandima Ariyarathna, Department of Botany, University of Peradeniya:
+Rice breeder by training. Principle investigator of the project.
+Conceptualizing the overall project, acquiring funding, and project
+coordination

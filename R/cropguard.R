@@ -1,7 +1,7 @@
 globalVariables(c("time", ".resid", ".mean", "error", "type" ))
 
-#' riceblast: Weather-based blast disease forecasting and early warning system
-#' @description The riceblast package provides data and tools for forecasting
+#' cropguard: Weather-based blast disease forecasting and early warning system
+#' @description The cropguard package provides data and tools for forecasting
 #' rice blast disease outbreaks using weather-based parameters. It combines
 #' climate variables (such as temperature, humidity, and rainfall) with
 #' knowledge of disease development to build predictive models and early
@@ -10,5 +10,5 @@ globalVariables(c("time", ".resid", ".mean", "error", "type" ))
 #' sustainable management strategies to reduce crop losses and improve food security.
 #' @author  Priyanga Dilini Talagala
 #' _PACKAGE
-#' @name  riceblast
+#' @name  cropguard
 NULL

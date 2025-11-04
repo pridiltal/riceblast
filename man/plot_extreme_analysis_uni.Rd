@@ -61,7 +61,7 @@ test_data <- data |>
   dplyr::select(date, value) |>
   tsibble::as_tsibble(index = date)
 
-test_result <- riceblast::test_extremes_uni(result,test_data = test_data,  h = 200)
+test_result <- cropguard::test_extremes_uni(result,test_data = test_data,  h = 200)
 
 # Generate and view plots
 plots <- plot_extreme_analysis_uni(test_result)

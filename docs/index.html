@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Weather-Based Blast Disease Forecasting and Early Warning System • riceblast</title>
+<title>Weather-Based Blast Disease Forecasting and Early Warning System • cropguard</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png">
 <link rel="icon" type="”image/svg+xml”" href="favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Weather-Based Blast Disease Forecasting and Early Warning System">
-<meta property="og:description" content="The riceblast package provides data and tools for forecasting rice blast disease outbreaks using weather-based parameters. It combines climate variables (such as temperature, humidity, and rainfall) with knowledge of disease development to build predictive models and early warning systems. The package helps researchers, agronomists, and policymakers understand and anticipate disease risks, supporting sustainable management strategies to reduce crop losses and improve food security.">
+<meta property="og:description" content="The cropguard package provides data and tools for forecasting rice blast disease outbreaks using weather-based parameters. It combines climate variables (such as temperature, humidity, and rainfall) with knowledge of disease development to build predictive models and early warning systems. The package helps researchers, agronomists, and policymakers understand and anticipate disease risks, supporting sustainable management strategies to reduce crop losses and improve food security.">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -38,7 +38,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">riceblast</a>
+        <a class="navbar-link" href="index.html">cropguard</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
       </span>
     </div>
@@ -77,32 +77,32 @@
       </header><div class="row">
   <div class="contents col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="riceblast-">riceblast <img src="reference/figures/logo.png" align="right" height="200" width="200"><a class="anchor" aria-label="anchor" href="#riceblast-"></a>
+<div class="page-header"><h1 id="cropguard-">cropguard <img src="reference/figures/logo.png" align="right" height="200" width="200"><a class="anchor" aria-label="anchor" href="#cropguard-"></a>
 </h1></div>
 <p><a href="https://www.repostatus.org/#wip" class="external-link"><img src="https://www.repostatus.org/badges/latest/wip.svg" alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public."></a> <a href="https://www.gnu.org/licenses/old-licenses/gpl-3.0.html" class="external-link"><img src="https://img.shields.io/badge/licence-GPL--3-blue.svg" alt="Licence"></a> <a href="https://cran.r-project.org/" class="external-link"><img src="https://img.shields.io/badge/R%3E%3D-4.1.0-6666ff.svg" alt="minimal R version"></a> <a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-0.1.0-orange.svg?style=flat-square" alt="packageversion"></a></p>
 <hr>
-<p><a href="/commits/master"><img src="https://img.shields.io/badge/last%20change-2025--10--29-yellowgreen.svg" alt="Last-changedate"></a></p>
-<p>The goal of the <code>riceblast</code> R package is to provide data and tools for forecasting rice blast disease outbreaks using weather-based parameters. It combines climate variables (such as temperature, humidity, and rainfall) with knowledge of disease development to build predictive models and early warning systems. The package helps researchers, agronomists, and policymakers understand and anticipate disease risks, supporting sustainable management strategies to reduce crop losses and improve food security.</p>
+<p><a href="/commits/master"><img src="https://img.shields.io/badge/last%20change-2025--11--04-yellowgreen.svg" alt="Last-changedate"></a></p>
+<p>The goal of the <code>cropguard</code> R package is to provide data and tools for forecasting rice blast disease outbreaks using weather-based parameters. It combines climate variables (such as temperature, humidity, and rainfall) with knowledge of disease development to build predictive models and early warning systems. the <code>cropguard</code> package implements a tool for accurate and timely disease forecasting based on realtime weather data. The package helps researchers, agronomists, and policymakers understand and anticipate disease risks, supporting sustainable management strategies to reduce crop losses and improve food security. This platform fosters a supportive network of plant pathogen surveillance stakeholders, working together to advance agricultural health.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of riceblast from <a href="https://github.com/pridiltal/riceblast" class="external-link">GitHub</a> with:</p>
+<p>You can install the development version of cropguard from <a href="https://github.com/pridiltal/cropguard" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
-<span><span class="fu">pak</span><span class="fu">::</span><span class="fu">pak</span><span class="op">(</span><span class="st">"pridiltal/riceblast"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu">pak</span><span class="op">(</span><span class="st">"pridiltal/cropguard"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="proposed-framework">Proposed framework<a class="anchor" aria-label="anchor" href="#proposed-framework"></a>
 </h2>
-<p>The following figure summarizes the proposed framework for climate-based blast disease monitoring, comprising two primary phases: an off-line phase and an on-line phase. In the off-line phase, historical climate data characterizing typical behaviour are preprocessed, and an automated model selection procedure is employed to identify the optimal univariate model for a given dataset, which are subsequently fitted to the data. Residuals from these models are then analyzed to estimate field-specific anomalous thresholds using Extreme Value Theory (EVT), providing reference points for the detection of potential disease outbreaks. In the on-line phase, incoming climate data from the test window undergoes preprocessing and forecast generation. Forecast errors are evaluated against the previously determined anomalous thresholds to classify observations as either typical or indicative of a blast alert. This two-phase approach enables both data-driven model calibration and real-time disease risk assessment.</p>
+<p>The following figure summarizes the proposed framework for climate-based blast disease monitoring, comprising two primary phases: an off-line phase and an on-line phase. In the off-line phase, historical climate data characterizing typical behaviour are preprocessed, and an automated model selection procedure is employed to identify the optimal univariate model for a given dataset, which are subsequently fitted to the data. Residuals from these models are then analyzed to estimate field-specific anomalous thresholds using Extreme Value Theory (EVT), providing reference points for the detection of potential disease outbreaks. In the on-line phase, incoming real time climate data from the test window undergoes preprocessing and forecast generation. Forecast errors are evaluated against the previously determined anomalous thresholds to classify observations as either typical or indicative of a blast alert. This two-phase approach enables both data-driven model calibration and real-time disease risk assessment.</p>
 <p><img src="reference/figures/framework.png" width="850"></p>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>This is an example dataset available in the riceblast package. For more examples, please refer to the package vignettes.</p>
+<p>This is an example dataset available in the <code>cropguard</code> package. For more examples, please refer to the package vignettes.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">riceblast</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">cropguard</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">field1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 6 × 9</span></span>
 <span><span class="co">#&gt;   time                  d2m   t2m  stl1   u10     v10         tp type       RH</span></span>
@@ -113,7 +113,7 @@
 <span><span class="co">#&gt; 4 2020-11-01 04:00:00  296.  303.  305.  2.33  0.0884 0.00000291 typical  65.3</span></span>
 <span><span class="co">#&gt; 5 2020-11-01 05:00:00  295.  304.  307.  2.43 -0.457  0.00000291 typical  56.4</span></span>
 <span><span class="co">#&gt; 6 2020-11-01 06:00:00  294.  305.  309.  2.47 -1.22   0.00000291 typical  51.4</span></span></code></pre></div>
-<p>The following example demonstrates the detection of unusually low values (lower extremes) in a daily time series, using a synthetic dataset processed through the <code>riceblast</code> workflow. We first fit a model on an initial “typical” period to estimate the lower extreme threshold and then test whether future observations fall below that threshold. The generated plots visualize both the detected extremes and the corresponding forecast errors.</p>
+<p>The following example demonstrates the detection of unusually low or high values (lower or upper extremes) in a daily time series, using a synthetic dataset processed through the <code>CropGuard</code> workflow. We first fit a model on an initial “typical” period to estimate the lower and upper extreme thresholds and then test whether future observations fall outside those thresholds. The generated plots visualize both the detected extremes and the corresponding forecast errors.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a sample daily time series dataset with a gradual level shift</span></span>
 <span><span class="va">base_vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">300</span><span class="op">)</span></span>
@@ -139,18 +139,18 @@
 <span>  k<span class="op">=</span><span class="fl">0</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tsibble: 243 x 2 [1D]</span></span>
-<span><span class="co">#&gt;    date          value</span></span>
-<span><span class="co">#&gt;    &lt;date&gt;        &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt;  1 2020-01-01 -0.562  </span></span>
-<span><span class="co">#&gt;  2 2020-01-02  0.0846 </span></span>
-<span><span class="co">#&gt;  3 2020-01-03  0.167  </span></span>
-<span><span class="co">#&gt;  4 2020-01-04  0.00602</span></span>
-<span><span class="co">#&gt;  5 2020-01-05  1.66   </span></span>
-<span><span class="co">#&gt;  6 2020-01-06 -1.88   </span></span>
-<span><span class="co">#&gt;  7 2020-01-07  0.364  </span></span>
-<span><span class="co">#&gt;  8 2020-01-08 -0.153  </span></span>
-<span><span class="co">#&gt;  9 2020-01-09 -0.100  </span></span>
-<span><span class="co">#&gt; 10 2020-01-10  0.415  </span></span>
+<span><span class="co">#&gt;    date         value</span></span>
+<span><span class="co">#&gt;    &lt;date&gt;       &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1 2020-01-01 -1.77  </span></span>
+<span><span class="co">#&gt;  2 2020-01-02 -0.0390</span></span>
+<span><span class="co">#&gt;  3 2020-01-03  0.228 </span></span>
+<span><span class="co">#&gt;  4 2020-01-04 -0.0954</span></span>
+<span><span class="co">#&gt;  5 2020-01-05  0.125 </span></span>
+<span><span class="co">#&gt;  6 2020-01-06  0.637 </span></span>
+<span><span class="co">#&gt;  7 2020-01-07 -1.75  </span></span>
+<span><span class="co">#&gt;  8 2020-01-08 -0.123 </span></span>
+<span><span class="co">#&gt;  9 2020-01-09 -0.0691</span></span>
+<span><span class="co">#&gt; 10 2020-01-10  1.07  </span></span>
 <span><span class="co">#&gt; # ℹ 233 more rows</span></span>
 <span></span>
 <span><span class="co"># Prepare a test dataset</span></span>
@@ -160,7 +160,7 @@
 <span>  <span class="fu">tsibble</span><span class="fu">::</span><span class="fu"><a href="https://tsibble.tidyverts.org/reference/as-tsibble.html" class="external-link">as_tsibble</a></span><span class="op">(</span>index <span class="op">=</span> <span class="va">date</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Evaluate future values against the learned extreme threshold</span></span>
-<span><span class="va">test_result</span> <span class="op">&lt;-</span> <span class="fu">riceblast</span><span class="fu">::</span><span class="fu"><a href="reference/test_extremes_uni.html">test_extremes_uni</a></span><span class="op">(</span><span class="va">result</span>, test_data <span class="op">=</span> <span class="va">test_data</span>, h <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span>
+<span><span class="va">test_result</span> <span class="op">&lt;-</span> <span class="fu">cropguard</span><span class="fu">::</span><span class="fu"><a href="reference/test_extremes_uni.html">test_extremes_uni</a></span><span class="op">(</span><span class="va">result</span>, test_data <span class="op">=</span> <span class="va">test_data</span>, h <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># # Generate and view plots for extremes and errors</span></span>
 <span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/plot_extreme_analysis_uni.html">plot_extreme_analysis_uni</a></span><span class="op">(</span><span class="va">test_result</span><span class="op">)</span></span>
@@ -185,14 +185,14 @@
 <div class="section level2">
 <h2 id="project-team-members">Project team members<a class="anchor" aria-label="anchor" href="#project-team-members"></a>
 </h2>
-<p>Chandima Ariyarathna, Department of Botany, University of Peradeniya</p>
-<p>Priyanga Dilini Talagala, Department of Computational Mathematics, University of Moratuwa</p>
-<p>Sachith P. Abesundara, Department of Statistics and Computer Science, University of Peradeniya</p>
+<p>Priyanga Dilini Talagala, Department of Computational Mathematics, University of Moratuwa. Lead developer of the R package.</p>
 <p>Mahlon Pragath Rambukkange, Department of Geography, University of Peradeniya</p>
+<p>Sachith P. Abesundara, Department of Statistics and Computer Science, University of Peradeniya</p>
 <p>Isuru Madugalla, Department of Statistics &amp; Computer Science, University of Peradeniya.</p>
-<p>K.R.D. Gunapala, Rice Reaserch and Development Institute, Batalagoda</p>
+<p>Shashika Weerakoon, Postgraduate Institute of Science, University of Peradeniya</p>
 <p>H.N.S. Fernando, Rice Reaserch and Development Institute, Batalagoda</p>
-<p>Shashika Weerakoon, University of Peradeniya.</p>
+<p>Dulakshi Pabasara, Department of Botany, University of Peradeniya</p>
+<p>Chandima Ariyarathna, Department of Botany, University of Peradeniya: Rice breeder by training. Principle investigator of the project. Conceptualizing the overall project, acquiring funding, and project coordination</p>
 </div>
 </div>
   </div>
@@ -209,7 +209,7 @@
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="authors.html#citation">Citing riceblast</a></li>
+<li><a href="authors.html#citation">Citing cropguard</a></li>
 </ul>
 </div>
 
@@ -217,13 +217,13 @@
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Priyanga Dilini Talagala <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-2870-7449" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
-<li>Chandima Ariyarathna <br><small class="roles"> Author, contributor </small>   </li>
 <li>Mahlon Rambukkange <br><small class="roles"> Author, contributor </small>   </li>
 <li>Sachith Abesundara <br><small class="roles"> Author, contributor </small>   </li>
 <li>Isuru Madugalla <br><small class="roles"> Author, contributor </small>   </li>
-<li>K.R.D. Gunapala <br><small class="roles"> Author, contributor </small>   </li>
-<li>H.N.S. Fernando <br><small class="roles"> Author, contributor </small>   </li>
 <li>Shashika Weerakoon <br><small class="roles"> Author, contributor </small>   </li>
+<li>H.N.S. Fernando <br><small class="roles"> Author, contributor </small>   </li>
+<li>Dulakshi Pabasara <br><small class="roles"> Author, contributor </small>   </li>
+<li>Chandima Ariyarathna <br><small class="roles"> Author, contributor </small>   </li>
 </ul>
 </div>
 
@@ -235,7 +235,7 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Priyanga Dilini Talagala, Chandima Ariyarathna, Mahlon Rambukkange, Sachith Abesundara, Isuru Madugalla, K.R.D. Gunapala, H.N.S. Fernando, Shashika Weerakoon.</p>
+<p>Developed by Priyanga Dilini Talagala, Mahlon Rambukkange, Sachith Abesundara, Isuru Madugalla, Shashika Weerakoon, H.N.S. Fernando, Dulakshi Pabasara, Chandima Ariyarathna.</p>
 </div>
 
 <div class="pkgdown">
